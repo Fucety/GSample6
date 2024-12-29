@@ -176,6 +176,64 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc4268adf39ed01419d0a7306b2908a6, type: 3}
+--- !u!1 &11936177
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 11936178}
+  - component: {fileID: 11936179}
+  m_Layer: 0
+  m_Name: Music level
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &11936178
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 11936177}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1151062914}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &11936179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 11936177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043C\u0443\u0437\u044B\u043A\u0438:"
+    Object: {fileID: 0}
+  - Language: English
+    Text: 'Music volume:'
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Volumen de m\xFAsica:"
+    Object: {fileID: 0}
+  - Language: Turkish
+    Text: "M\xFCzik hacmi:"
+    Object: {fileID: 0}
 --- !u!1 &28923228
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,6 +2212,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationName: Start
+  FallbackText: "\u041D\u0430\u0447\u0430\u0442\u044C"
 --- !u!114 &337950657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2174,7 +2234,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u041D\u0430\u0447\u0430\u0442\u044C"
+  m_text: Comenzar
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
   m_sharedMaterial: {fileID: 2715695833679251433, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
@@ -3919,7 +3979,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 806f0696300aeac44a0e17efee222854, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentLanguage: Russian
+  currentLanguage: Spanish
   detectLanguage: 1
   defaultLanguage: 
   saveLoad: 1
@@ -3941,10 +4001,7 @@ Transform:
   - {fileID: 1781256217}
   - {fileID: 1924548974}
   - {fileID: 1859695055}
-  - {fileID: 1670560198}
-  - {fileID: 1814277776}
-  - {fileID: 645340198}
-  - {fileID: 1756116650}
+  - {fileID: 1151062914}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &595357932
@@ -4302,7 +4359,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 590307822}
+  m_Father: {fileID: 1151062914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &645340199
 MonoBehaviour:
@@ -5232,6 +5289,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationName: Effects level
+  FallbackText: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u044D\u0444\u0444\u0435\u043A\u0442\u043E\u0432:"
 --- !u!114 &772310729
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5252,7 +5311,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u044D\u0444\u0444\u0435\u043A\u0442\u043E\u0432:"
+  m_text: 'Volumen de efectos:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
   m_sharedMaterial: {fileID: 2715695833679251433, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
@@ -5406,6 +5465,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 777422219}
   m_CullTransparentMesh: 1
+--- !u!1 &789405659
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 789405660}
+  - component: {fileID: 789405661}
+  m_Layer: 0
+  m_Name: Effects level
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &789405660
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789405659}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1151062914}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &789405661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789405659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u044D\u0444\u0444\u0435\u043A\u0442\u043E\u0432:"
+    Object: {fileID: 0}
+  - Language: English
+    Text: 'Effects volume:'
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: 'Volumen de efectos:'
+    Object: {fileID: 0}
+  - Language: Turkish
+    Text: 'Efekt hacmi:'
+    Object: {fileID: 0}
 --- !u!1 &800096407
 GameObject:
   m_ObjectHideFlags: 0
@@ -5771,6 +5888,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationName: Choose reward
+  FallbackText: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043D\u0430\u0433\u0440\u0430\u0434\u0443:"
 --- !u!114 &813743812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5791,7 +5910,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043D\u0430\u0433\u0440\u0430\u0434\u0443:"
+  m_text: 'Seleccionar recompensa:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
   m_sharedMaterial: {fileID: 2715695833679251433, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
@@ -5818,7 +5937,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 96.65
+  m_fontSize: 75.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6433,6 +6552,65 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &871461415
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 871461416}
+  - component: {fileID: 871461417}
+  m_Layer: 0
+  m_Name: Sound configuration
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &871461416
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871461415}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1151062914}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &871461417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871461415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb15fa0e7301ff849bf4d6dcede7c12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: 0
+  entries:
+  - Language: Russian
+    Text: "\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F
+      \u0437\u0432\u0443\u043A\u0430:"
+    Object: {fileID: 0}
+  - Language: English
+    Text: 'Sound configuration:'
+    Object: {fileID: 0}
+  - Language: Spanish
+    Text: "Configuraci\xF3n de sonido:"
+    Object: {fileID: 0}
+  - Language: Turkish
+    Text: "Ses yap\u0131land\u0131rmas\u0131:"
+    Object: {fileID: 0}
 --- !u!1 &919800587
 GameObject:
   m_ObjectHideFlags: 0
@@ -7776,6 +7954,44 @@ MonoBehaviour:
   selectedActions: 4
   targetPosition: {x: 0, y: -360, z: 0}
   duration: 0.5
+--- !u!1 &1151062913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1151062914}
+  m_Layer: 0
+  m_Name: Translations
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1151062914
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1151062913}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 789405660}
+  - {fileID: 11936178}
+  - {fileID: 1670560198}
+  - {fileID: 871461416}
+  - {fileID: 1814277776}
+  - {fileID: 645340198}
+  - {fileID: 1756116650}
+  m_Father: {fileID: 590307822}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1184297545
 GameObject:
   m_ObjectHideFlags: 0
@@ -8311,6 +8527,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationName: Sound configuration
+  FallbackText: "\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F
+    \u0437\u0432\u0443\u043A\u0430:"
 --- !u!114 &1235808684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8331,8 +8550,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u041A\u043E\u043D\u0444\u0438\u0433\u0443\u0440\u0430\u0446\u0438\u044F
-    \u0437\u0432\u0443\u043A\u0430:"
+  m_text: "Configuraci\xF3n de sonido:"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
   m_sharedMaterial: {fileID: 2715695833679251433, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
@@ -8359,7 +8577,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 86.9
+  m_fontSize: 76.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10852,6 +11070,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationName: Choose skin
+  FallbackText: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u043A\u0438\u043D:"
 --- !u!114 &1656184506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10872,7 +11092,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0441\u043A\u0438\u043D:"
+  m_text: 'Seleccionar piel:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
   m_sharedMaterial: {fileID: 2715695833679251433, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
@@ -10899,7 +11119,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 117.85
+  m_fontSize: 114.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10976,12 +11196,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1670560197}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 590307822}
+  m_Father: {fileID: 1151062914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1670560199
 MonoBehaviour:
@@ -11371,7 +11591,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 590307822}
+  m_Father: {fileID: 1151062914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1756116651
 MonoBehaviour:
@@ -11511,6 +11731,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationName: Music level
+  FallbackText: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043C\u0443\u0437\u044B\u043A\u0438:"
 --- !u!114 &1790578126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11531,7 +11753,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0413\u0440\u043E\u043C\u043A\u043E\u0441\u0442\u044C \u043C\u0443\u0437\u044B\u043A\u0438:"
+  m_text: "Volumen de m\xFAsica:"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
   m_sharedMaterial: {fileID: 2715695833679251433, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
@@ -11774,7 +11996,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 590307822}
+  m_Father: {fileID: 1151062914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1814277777
 MonoBehaviour:
@@ -12500,7 +12722,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u044F\u0437\u044B\u043A:"
+  m_text: 'Seleccionar idioma:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
   m_sharedMaterial: {fileID: 2715695833679251433, guid: 15de5502ddb95bd4fb00334f2007a5b8, type: 2}
@@ -12527,7 +12749,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 114.7
+  m_fontSize: 96.55
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -12591,6 +12813,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf51be86e70d7941bd40914206e4ddc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  translationName: Choose language
+  FallbackText: "\u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u044F\u0437\u044B\u043A:"
 --- !u!1 &1953642153
 GameObject:
   m_ObjectHideFlags: 0

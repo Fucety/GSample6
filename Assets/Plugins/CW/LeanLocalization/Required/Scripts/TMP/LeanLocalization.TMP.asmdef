@@ -1,5 +1,6 @@
 {
     "name": "LeanLocalization.TMP",
+    "rootNamespace": "",
     "references": [
         "LeanLocalization",
         "Unity.TextMeshPro"
@@ -15,7 +16,7 @@
     ],
     "versionDefines": [
         {
-            "name": "com.unity.textmeshpro",
+            "name": "com.unity.ugui",
             "expression": "",
             "define": "__TEXTMESHPRO__"
         }

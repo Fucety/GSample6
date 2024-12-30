@@ -1,0 +1,7 @@
+Effects level,Efekt seviyesi
+Music level,Müzik seviyesi
+Start,Başlat
+Sound configuration,Ses yapılandırması
+Choose language,Dil seçin
+Choose skin,Görünüm seçin
+Choose reward,Ödül seçin

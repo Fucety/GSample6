@@ -1,0 +1,7 @@
+Effects level,Effects level
+Music level,Music level
+Start,Start
+Sound configuration,Sound configuration
+Choose language,Choose language
+Choose skin,Choose skin
+Choose reward,Choose reward

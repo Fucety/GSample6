@@ -2,6 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.U2D;
 using DG.Tweening;
+using TMPro;
+
+[System.Serializable]
+public class SkinData
+{
+    public string spriteName; // Имя скина
+    public int price;         // Цена скина
+}
 
 public class ShopManager : MonoBehaviour
 {
@@ -9,23 +17,22 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private GameObject shopPrefab;
     [SerializeField] private GameObject shopPanel;
     [SerializeField] private SpriteAtlas spriteAtlas;
-    [SerializeField] private string[] skinSpriteNames;
+    [SerializeField] private SkinData[] skins; // Массив объектов SkinData
     [SerializeField] private float moveDuration = 0.5f;
 
     private float moveDistance = -1000f;
-    private float rightBoundary = -1000f; // Начальное значение обновлено
+    private float rightBoundary = -1000f;
     private float leftBoundary = 0f;
     private GameObject[] gridPanel;
     private int currentGPL = 0;
     private int currentSSN = 0;
     private int cells = 0;
-    private readonly int grids = 9;
+    private readonly int grids = 9; // Количество ячеек на одной панели
     private float currentPositionX = 0f;
 
     private void Start()
     {
-        // Подсчитываем общее количество ячеек
-        cells = Mathf.CeilToInt((float)skinSpriteNames.Length / grids) * grids;
+        cells = Mathf.CeilToInt((float)skins.Length / grids) * grids;
         rightBoundary = ((cells / grids) - 1) * -1000f;
         currentPositionX = shopPanel.transform.localPosition.x;
 
@@ -39,7 +46,6 @@ public class ShopManager : MonoBehaviour
 
         for (int i = 0; i < menuCount; i++)
         {
-            // Проверяем, существует ли уже shopPrefab в иерархии
             if (gridPanel[i] == null)
             {
                 GameObject prefabInstance = Instantiate(shopPrefab, shopPanel.transform);
@@ -52,32 +58,49 @@ public class ShopManager : MonoBehaviour
 
     private void CreateCells()
     {
-        foreach (string spriteName in skinSpriteNames)
+        foreach (SkinData skin in skins)
         {
-            // Пропускаем пустые имена скинов
-            if (string.IsNullOrEmpty(spriteName)) continue;
+            if (string.IsNullOrEmpty(skin.spriteName)) continue;
 
+            // Переход на следующую панель, если текущая заполнена
             if (currentSSN == grids)
             {
                 currentGPL++;
                 currentSSN = 0;
             }
 
-            Sprite skinSprite = spriteAtlas.GetSprite(spriteName);
+            Sprite skinSprite = spriteAtlas.GetSprite(skin.spriteName);
             if (skinSprite != null)
             {
+                // Создаем новую кнопку
                 GameObject newButton = Instantiate(buttonPrefab, gridPanel[currentGPL].transform);
+
+                // Устанавливаем спрайт для кнопки
                 Image childImage = newButton.transform.Find("Icon").GetComponent<Image>();
                 if (childImage != null)
                 {
                     childImage.sprite = skinSprite;
-                    currentSSN++;
                 }
-                newButton.GetComponent<Button>().onClick.AddListener(() => SelectSkin(spriteName));
+
+                // Устанавливаем цену
+                TextMeshProUGUI priceText = newButton.transform.Find("Price").GetComponent<TextMeshProUGUI>();
+                if (priceText != null)
+                {
+                    priceText.text = $"{skin.price} $";
+                }
+                else
+                {
+                    Debug.LogWarning("Компонент TextMeshProUGUI для цены не найден на префабе.");
+                }
+
+                // Добавляем обработчик клика с передачей имени и цены
+                int price = skin.price; // Локальная переменная, чтобы избежать замыкания
+                newButton.GetComponent<Button>().onClick.AddListener(() => SelectSkin(skin.spriteName, price));
+                currentSSN++;
             }
             else
             {
-                Debug.LogWarning($"Спрайт с именем {spriteName} не найден в атласе.");
+                Debug.LogWarning($"Спрайт с именем {skin.spriteName} не найден в атласе.");
             }
         }
     }
@@ -108,8 +131,8 @@ public class ShopManager : MonoBehaviour
         });
     }
 
-    private void SelectSkin(string selectedSkinName)
+    private void SelectSkin(string selectedSkinName, int price)
     {
-        Debug.Log("Выбран скин: " + selectedSkinName);
+        Debug.Log($"Выбран скин: {selectedSkinName}, Цена: {price}$");
     }
 }

@@ -1,0 +1,7 @@
+Effects level,Громкость эффектов
+Music level,Громкость музыки
+Start,Начать
+Sound configuration,Настройка звука
+Choose language,Выберите язык
+Choose skin,Выберите скин
+Choose reward,Выберите награду

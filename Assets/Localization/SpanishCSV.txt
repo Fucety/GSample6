@@ -1,0 +1,7 @@
+Effects level,Nivel de efectos
+Music level,Nivel de música
+Start,Comenzar
+Sound configuration,Configuración de sonido
+Choose language,Elegir idioma
+Choose skin,Elegir apariencia
+Choose reward,Elegir recompensa

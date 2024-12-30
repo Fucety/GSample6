@@ -19,6 +19,11 @@ public class AnimationManager : MonoBehaviour
     [SerializeField] private Vector3 targetPosition;
     [SerializeField] private float duration;
 
+    [Header("Управление анимацией")]
+    [SerializeField] private Ease animationEasePreset = Ease.InOutBack; // Выбор предустановленной кривой
+    [SerializeField] private AnimationCurve customAnimationCurve; // Пользовательская кривая
+    [SerializeField] private bool useCustomCurve = false; // Флаг использования пользовательской кривой
+
     private RectTransform rectButton = null;            // Компонент RectTransform
     private Vector3 initialPosition;                   // Исходная позиция
     private bool AltToggled = false;                   // Флаг состояния анимации
@@ -82,25 +87,37 @@ public class AnimationManager : MonoBehaviour
             AltToggled = !AltToggled;
             if (!AltToggled)
             {
-                rectButton.DOAnchorPos(initialPosition, duration).SetEase(Ease.InOutQuad);
+                AnimateToPosition(initialPosition);
             }
             else
             {
-                rectButton.DOAnchorPos(targetPosition, duration).SetEase(Ease.InOutQuad);
+                AnimateToPosition(targetPosition);
             }
         }
         else if (isToggled != 0)
         {
             if (isToggled == -1)
             {
-                rectButton.DOAnchorPos(initialPosition, duration).SetEase(Ease.InOutQuad);
+                AnimateToPosition(initialPosition);
                 AltToggled = false;
             }
             else if (isToggled == 1)
             {
-                rectButton.DOAnchorPos(targetPosition, duration).SetEase(Ease.InOutQuad);
+                AnimateToPosition(targetPosition);
                 AltToggled = true;
             }
+        }
+    }
+
+    private void AnimateToPosition(Vector3 position)
+    {
+        if (useCustomCurve && customAnimationCurve != null)
+        {
+            rectButton.DOAnchorPos(position, duration).SetEase(customAnimationCurve);
+        }
+        else
+        {
+            rectButton.DOAnchorPos(position, duration).SetEase(animationEasePreset);
         }
     }
     #endregion

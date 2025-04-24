@@ -1,0 +1,7 @@
+Effects level,效果音量
+Music level,音乐音量
+Start,开始
+Sound configuration,声音设置
+Choose language,选择语言
+Choose skin,选择皮肤
+Choose reward,选择奖励

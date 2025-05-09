@@ -9,10 +9,50 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 341e3d687ec10b34c815aabf88474738, type: 3}
   m_Name: ShopPanelData
-  m_EditorClassIdentifier: Assembly-CSharp::ShopPanelDataSO
+  m_EditorClassIdentifier: 
   skins:
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
+  - spriteName: gay1
+    price: 1
   - spriteName: gay1
     price: 1
   - spriteName: gay1

@@ -3,19 +3,6 @@ using UnityEngine.UI;
 using UnityEngine.U2D;
 using TMPro;
 
-[System.Serializable]
-public class SkinData
-{
-    public string spriteName; // Имя скина
-    public int price;         // Цена скина
-}
-
-[CreateAssetMenu(fileName = "ShopPanelData", menuName = "PanelData/ShopPanelData")]
-public class ShopPanelDataSO : ScriptableObject
-{
-    public SkinData[] skins;
-}
-
 public class ShopManager : MonoBehaviour
 {
     [SerializeField] private GameObject buttonPrefab;

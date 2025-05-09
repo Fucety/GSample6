@@ -876,6 +876,7 @@ GameObject:
   - component: {fileID: 124447489}
   - component: {fileID: 124447488}
   - component: {fileID: 124447491}
+  - component: {fileID: 124447492}
   m_Layer: 5
   m_Name: Back
   m_TagString: Untagged
@@ -1004,7 +1005,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 124447486}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -1025,6 +1026,65 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &124447492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 124447486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 0
+    targetPosition: {x: 180, y: 300, z: 0}
+    duration: 0.5
+    affectedWindows: []
+    subscribedEvents: 03000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &147137540
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,6 +1096,7 @@ GameObject:
   - component: {fileID: 147137541}
   - component: {fileID: 147137542}
   - component: {fileID: 147137543}
+  - component: {fileID: 147137544}
   m_Layer: 5
   m_Name: ShopWindow
   m_TagString: Untagged
@@ -1090,7 +1151,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 147137540}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -1138,6 +1199,65 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &147137544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147137540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 0
+    targetPosition: {x: 0, y: 0, z: 0}
+    duration: 0.5
+    affectedWindows: []
+    subscribedEvents: 03000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &152187435
 GameObject:
   m_ObjectHideFlags: 0
@@ -1264,6 +1384,7 @@ GameObject:
   - component: {fileID: 165010408}
   - component: {fileID: 165010407}
   - component: {fileID: 165010412}
+  - component: {fileID: 165010413}
   m_Layer: 5
   m_Name: SettingsB
   m_TagString: Untagged
@@ -1336,19 +1457,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 165010408}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: SettingsMActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &165010408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1434,7 +1543,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 165010405}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -1482,6 +1591,67 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 1
+--- !u!114 &165010413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165010405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 1
+    targetPosition: {x: -180, y: -180, z: 0}
+    duration: 0.5
+    affectedWindows:
+    - window: 2
+      actionValue: 0
+    subscribedEvents: 00000000010000000300000004000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 1
 --- !u!1 &191750594
 GameObject:
   m_ObjectHideFlags: 0
@@ -2528,13 +2698,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
-  m_MaskingMode: 0
+  m_MaskingMode: 1
   m_AlphaHitTest: 0
   m_SoftnessRange:
     m_Min: 0
     m_Max: 1
-  m_DownSamplingRate: 1
-  m_AntiAliasingThreshold: 0
+  m_DownSamplingRate: 4
+  m_AntiAliasingThreshold: 0.206
   m_Alpha: -1
   m_Softness: -1
   m_PartOfParent: 0
@@ -2897,13 +3067,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
-  m_MaskingMode: 0
+  m_MaskingMode: 1
   m_AlphaHitTest: 0
   m_SoftnessRange:
     m_Min: 0
     m_Max: 1
-  m_DownSamplingRate: 1
-  m_AntiAliasingThreshold: 0
+  m_DownSamplingRate: 4
+  m_AntiAliasingThreshold: 0.206
   m_Alpha: -1
   m_Softness: -1
   m_PartOfParent: 0
@@ -3127,13 +3297,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
-  m_MaskingMode: 0
+  m_MaskingMode: 1
   m_AlphaHitTest: 0
   m_SoftnessRange:
     m_Min: 0
     m_Max: 1
-  m_DownSamplingRate: 1
-  m_AntiAliasingThreshold: 0
+  m_DownSamplingRate: 4
+  m_AntiAliasingThreshold: 0.206
   m_Alpha: -1
   m_Softness: -1
   m_PartOfParent: 0
@@ -3567,6 +3737,7 @@ GameObject:
   m_Component:
   - component: {fileID: 595357933}
   - component: {fileID: 595357934}
+  - component: {fileID: 595357935}
   m_Layer: 5
   m_Name: SoundWindow
   m_TagString: Untagged
@@ -3602,7 +3773,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 595357932}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -3650,6 +3821,65 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &595357935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 595357932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 0
+    targetPosition: {x: 0, y: 0, z: 0}
+    duration: 0.5
+    affectedWindows: []
+    subscribedEvents: 04000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &599016268
 GameObject:
   m_ObjectHideFlags: 0
@@ -3786,6 +4016,7 @@ GameObject:
   - component: {fileID: 607680467}
   - component: {fileID: 607680466}
   - component: {fileID: 607680469}
+  - component: {fileID: 607680470}
   m_Layer: 5
   m_Name: ShopB
   m_TagString: Untagged
@@ -3856,31 +4087,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 607680467}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: ShopWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: Activate
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: RewardWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &607680467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3926,7 +4133,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607680464}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -3974,6 +4181,69 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 1
+--- !u!114 &607680470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607680464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 1
+    targetPosition: {x: 180, y: -180, z: 0}
+    duration: 0.5
+    affectedWindows:
+    - window: 3
+      actionValue: 1
+    - window: 0
+      actionValue: -1
+    subscribedEvents: 00000000010000000300000004000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 1
 --- !u!1 &645340197
 GameObject:
   m_ObjectHideFlags: 0
@@ -5262,6 +5532,7 @@ GameObject:
   - component: {fileID: 800096410}
   - component: {fileID: 800096414}
   - component: {fileID: 800096415}
+  - component: {fileID: 800096416}
   m_Layer: 5
   m_Name: SoundB
   m_TagString: Untagged
@@ -5442,7 +5713,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800096407}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -5490,6 +5761,69 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &800096416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800096407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 1
+    targetPosition: {x: 0, y: -180, z: 0}
+    duration: 0.25
+    affectedWindows:
+    - window: 4
+      actionValue: 1
+    - window: 0
+      actionValue: -1
+    subscribedEvents: 02000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &807857026
 GameObject:
   m_ObjectHideFlags: 0
@@ -5777,6 +6111,7 @@ GameObject:
   - component: {fileID: 819497405}
   - component: {fileID: 819497404}
   - component: {fileID: 819497407}
+  - component: {fileID: 819497408}
   m_Layer: 5
   m_Name: PlayB
   m_TagString: Untagged
@@ -5893,7 +6228,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 819497402}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -5941,6 +6276,65 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 1
+--- !u!114 &819497408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819497402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 1
+    targetPosition: {x: 0, y: -300, z: 0}
+    duration: 0.5
+    affectedWindows: []
+    subscribedEvents: 00000000010000000300000004000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 1
 --- !u!1 &831086812
 GameObject:
   m_ObjectHideFlags: 0
@@ -6436,6 +6830,7 @@ GameObject:
   m_Component:
   - component: {fileID: 919800588}
   - component: {fileID: 919800589}
+  - component: {fileID: 919800590}
   m_Layer: 5
   m_Name: LanguageWindow
   m_TagString: Untagged
@@ -6471,7 +6866,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919800587}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -6519,6 +6914,65 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &919800590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919800587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 0
+    targetPosition: {x: 0, y: 0, z: 0}
+    duration: 0.5
+    affectedWindows: []
+    subscribedEvents: 01000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &951592436
 GameObject:
   m_ObjectHideFlags: 0
@@ -7409,6 +7863,7 @@ GameObject:
   - component: {fileID: 1140305572}
   - component: {fileID: 1140305577}
   - component: {fileID: 1140305578}
+  - component: {fileID: 1140305579}
   m_Layer: 5
   m_Name: LanguageB
   m_TagString: Untagged
@@ -7459,31 +7914,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1140305573}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: LanguageWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: Activate
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: RewardWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1140305573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7589,7 +8020,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1140305570}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -7637,6 +8068,69 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &1140305579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1140305570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 1
+    targetPosition: {x: 0, y: -360, z: 0}
+    duration: 0.25
+    affectedWindows:
+    - window: 1
+      actionValue: 1
+    - window: 0
+      actionValue: -1
+    subscribedEvents: 02000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &1151062913
 GameObject:
   m_ObjectHideFlags: 0
@@ -8172,7 +8666,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -407.09637, y: -52.30865, z: -449.28998, w: 0}
+  m_margin: {x: -421.96384, y: -52.30865, z: -468.4054, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -8196,6 +8690,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1249228686}
   - component: {fileID: 1249228687}
+  - component: {fileID: 1249228688}
   m_Layer: 5
   m_Name: RewardWindow
   m_TagString: Untagged
@@ -8231,7 +8726,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249228685}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -8279,6 +8774,65 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &1249228688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249228685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 0
+    targetPosition: {x: 0, y: 0, z: 0}
+    duration: 0.5
+    affectedWindows: []
+    subscribedEvents: 00000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &1281882945
 GameObject:
   m_ObjectHideFlags: 0
@@ -8407,13 +8961,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
-  m_MaskingMode: 0
+  m_MaskingMode: 1
   m_AlphaHitTest: 0
   m_SoftnessRange:
     m_Min: 0
     m_Max: 1
-  m_DownSamplingRate: 1
-  m_AntiAliasingThreshold: 0
+  m_DownSamplingRate: 4
+  m_AntiAliasingThreshold: 0.206
   m_Alpha: -1
   m_Softness: -1
   m_PartOfParent: 0
@@ -8824,6 +9378,7 @@ GameObject:
   - component: {fileID: 1369769207}
   - component: {fileID: 1369769206}
   - component: {fileID: 1369769209}
+  - component: {fileID: 1369769210}
   m_Layer: 5
   m_Name: Forward
   m_TagString: Untagged
@@ -8952,7 +9507,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369769204}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -8973,6 +9528,65 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &1369769210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369769204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 0
+    targetPosition: {x: -180, y: 300, z: 0}
+    duration: 0.5
+    affectedWindows: []
+    subscribedEvents: 03000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &1380125080
 GameObject:
   m_ObjectHideFlags: 0
@@ -9182,7 +9796,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1428520555}
   m_Layer: 5
-  m_Name: CloseControls
+  m_Name: ButtonsControls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9433,6 +10047,7 @@ GameObject:
   - component: {fileID: 1493891178}
   - component: {fileID: 1493891177}
   - component: {fileID: 1493891180}
+  - component: {fileID: 1493891181}
   m_Layer: 5
   m_Name: CloseB
   m_TagString: Untagged
@@ -9503,67 +10118,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1493891178}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: RewardWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: LanguageWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: SettingsMActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: ShopWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: SoundWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1493891178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9609,7 +10164,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1493891175}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -9657,6 +10212,75 @@ MonoBehaviour:
   targetPivot: {x: 1, y: 1}
   deactivation: 1
   OnStartOrInMiddle: 0
+--- !u!114 &1493891181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493891175}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 1
+    targetPosition: {x: -180, y: -180, z: 0}
+    duration: 0.5
+    affectedWindows:
+    - window: 0
+      actionValue: -1
+    - window: 1
+      actionValue: -1
+    - window: 2
+      actionValue: -1
+    - window: 3
+      actionValue: -1
+    - window: 4
+      actionValue: -1
+    subscribedEvents: 00000000010000000300000004000000
+  usePositionModule: 1
+  useAnchorModule: 0
+  useDeactivation: 1
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 1, y: 1}
+  targetPivot: {x: 1, y: 1}
+  deactivationTiming: 0
 --- !u!1 &1497038661
 GameObject:
   m_ObjectHideFlags: 0
@@ -9670,6 +10294,7 @@ GameObject:
   - component: {fileID: 1497038664}
   - component: {fileID: 1497038663}
   - component: {fileID: 1497038666}
+  - component: {fileID: 1497038667}
   m_Layer: 5
   m_Name: MoneyB
   m_TagString: Untagged
@@ -9741,55 +10366,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1497038664}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: RewardWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: LanguageWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: ShopWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 951592439}
-        m_TargetAssemblyTypeName: MenuActions, Assembly-CSharp
-        m_MethodName: SoundWActivate
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1497038664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9835,7 +10412,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497038661}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe18a18eb92f1a142bfac092c98e4018, type: 3}
   m_Name: 
@@ -9883,6 +10460,73 @@ MonoBehaviour:
   targetPivot: {x: 0.5, y: 0.5}
   deactivation: 0
   OnStartOrInMiddle: 0
+--- !u!114 &1497038667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1497038661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2e161aeb7f1b749bbe011c775b1135, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  config:
+    isButton: 1
+    targetPosition: {x: 270, y: -180, z: 0}
+    duration: 0.5
+    affectedWindows:
+    - window: 0
+      actionValue: 1
+    - window: 1
+      actionValue: -1
+    - window: 3
+      actionValue: -1
+    - window: 4
+      actionValue: -1
+    subscribedEvents: 00000000010000000300000004000000
+  usePositionModule: 1
+  useAnchorModule: 1
+  useDeactivation: 0
+  useCustomCurve: 1
+  easePreset: 28
+  customCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00026324345
+      value: 0
+      inSlope: -0.3317821
+      outSlope: -0.3317821
+      tangentMode: 0
+      weightedMode: 2
+      inWeight: 0
+      outWeight: 0.9459613
+    - serializedVersion: 3
+      time: 0.9148208
+      value: 1.0015604
+      inSlope: -0.4898144
+      outSlope: -0.4898144
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.93267906
+      outWeight: 0.41100085
+    - serializedVersion: 3
+      time: 1.0019836
+      value: 1
+      inSlope: 0.13061832
+      outSlope: 0.13061832
+      tangentMode: 0
+      weightedMode: 3
+      inWeight: 0.3699812
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnchor: {x: 0, y: 1}
+  targetPivot: {x: 0.5, y: 0.5}
+  deactivationTiming: 1
 --- !u!1 &1526552437
 GameObject:
   m_ObjectHideFlags: 0

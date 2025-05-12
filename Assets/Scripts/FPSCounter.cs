@@ -34,4 +34,3 @@ public class FPSCounter : MonoBehaviour
         }
     }
 }
-//test

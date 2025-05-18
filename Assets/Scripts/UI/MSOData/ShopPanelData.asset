@@ -1,0 +1,150 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 341e3d687ec10b34c815aabf88474738, type: 3}
+  m_Name: ShopPanelData
+  m_EditorClassIdentifier: 
+  skins:
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 7529916052903274255, guid: 85376ff9a518a5a40b52fcb505058581, type: 3}
+  - spriteName: gay2
+    price: 2
+    modelPrefab: {fileID: 5787907223939371559, guid: 9d1170c1dc2a0ad408b3c15b4174a2fc, type: 3}
+  - spriteName: gay3
+    price: 3
+    modelPrefab: {fileID: 6546327194153399448, guid: 31456dc9cf83ce444ac8d645b7318831, type: 3}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}
+  - spriteName: gay1
+    price: 1
+    modelPrefab: {fileID: 0}

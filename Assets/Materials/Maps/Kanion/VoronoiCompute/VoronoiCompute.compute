@@ -1,0 +1,126 @@
+#pragma kernel ComputeVoronoi
+
+// Структура для параметров материала
+struct MaterialParams
+{
+    float voronoiScale;
+    float voronoiJitter;
+    float metricForRamp;
+    float perturbationStrength;
+    float perturbationScale;
+    float planarStrength;
+    float4 textureTransform; // Масштаб и смещение
+    float2 textureWorldSize; // Размер области текстуры в мировых координатах
+    float2 textureWorldOffset; // Смещение области текстуры в мировых координатах
+};
+
+// Буфер с параметрами материалов
+StructuredBuffer<MaterialParams> _MaterialParams;
+
+// Индекс материала (передается для каждого вызова)
+uint _MaterialIndex;
+
+// Выходная текстура
+RWTexture2D<float4> Result;
+
+// Размер текстуры
+uint _TextureSize;
+
+// Хэш-функция
+float2 hash_2D_to_2D(float2 p)
+{
+    return frac(sin(float2(dot(p, float2(127.1, 311.7)), dot(p, float2(269.5, 183.3)))) * 43758.5453);
+}
+
+// Простой 2D Value Noise
+float2 SimpleValueNoise2D(float2 p)
+{
+    float2 i = floor(p);
+    float2 f = frac(p);
+    float2 u = f * f * (3.0 - 2.0 * f);
+
+    float2 h00 = hash_2D_to_2D(i);
+    float2 h10 = hash_2D_to_2D(i + float2(1, 0));
+    float2 h01 = hash_2D_to_2D(i + float2(0, 1));
+    float2 h11 = hash_2D_to_2D(i + float2(1, 1));
+
+    return lerp(lerp(h00, h10, u.x), lerp(h01, h11, u.x), u.y) * 0.5;
+}
+
+// Вороной
+[numthreads(8,8,1)]
+void ComputeVoronoi(uint3 id : SV_DispatchThreadID)
+{
+    // Проверка валидности координат
+    if (id.x >= _TextureSize || id.y >= _TextureSize)
+        return;
+
+    // Получаем параметры текущего материала
+    MaterialParams params = _MaterialParams[_MaterialIndex];
+
+    // Координаты в мировом пространстве
+    float2 uv = float2(id.xy) / (float)_TextureSize; // [0, 1]
+    float2 coords = uv * params.textureWorldSize + params.textureWorldOffset; // Преобразуем в мировые координаты
+    
+    // Применяем масштаб и смещение
+    coords *= params.textureTransform.xy;
+    coords += params.textureTransform.zw;
+    coords /= max(params.planarStrength, 0.001);
+    
+    // Применяем шум
+    float2 offset = SimpleValueNoise2D(coords * params.perturbationScale) * params.perturbationStrength;
+    coords += offset;
+    coords *= max(params.voronoiScale, 0.001);
+
+    // Вороной
+    float2 n = floor(coords);
+    float2 f = frac(coords);
+    float min_dist1 = 8.0;
+    float min_dist2 = 8.0;
+    float2 closest_cell = float2(0, 0);
+
+    for (int j = -1; j <= 1; j++)
+    {
+        for (int i = -1; i <= 1; i++)
+        {
+            float2 g = float2(i, j);
+            float2 cell_id_temp = n + g;
+            float2 offset = hash_2D_to_2D(cell_id_temp);
+            float2 cellPoint = g + lerp(float2(0.5, 0.5), offset, clamp(params.voronoiJitter, 0.0, 1.0));
+            float2 r = cellPoint - f;
+
+            float dist;
+            if (params.metricForRamp < 0.5) dist = dot(r, r); // F1 Euclidean
+            else if (params.metricForRamp < 1.5) dist = dot(r, r); // F2 Euclidean
+            else dist = abs(r.x) + abs(r.y); // Manhattan
+
+            if (dist < min_dist1)
+            {
+                min_dist2 = min_dist1;
+                min_dist1 = dist;
+                closest_cell = g;
+            }
+            else if (dist < min_dist2)
+            {
+                min_dist2 = dist;
+            }
+        }
+    }
+
+    float2 cell_id = n + closest_cell;
+    if (params.metricForRamp < 1.5)
+    {
+        min_dist1 = sqrt(max(min_dist1, 0.0));
+        min_dist2 = sqrt(max(min_dist2, 0.0));
+    }
+
+    // Нормализуем результат
+    float4 output = float4(clamp(min_dist1, 0.0, 1.0), clamp(min_dist2, 0.0, 1.0), cell_id.x, cell_id.y);
+    if (isnan(output.x) || isnan(output.y) || isnan(output.z) || isnan(output.w))
+    {
+        output = float4(1.0, 0.0, 0.0, 1.0); // Красный для NaN
+    }
+
+    // Сохраняем результат
+    Result[id.xy] = output;
+}

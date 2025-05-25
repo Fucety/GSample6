@@ -149,7 +149,7 @@ Shader "Custom/VoronoiAdvanced_ProceduralNoise_Stretch_URP_Gen"
 
                 // Преобразуем координаты в пространство текстуры
                 float2 texCoords = (coords - _TextureWorldOffset) / _TextureWorldSize;
-                texCoords = frac(texCoords); // Обеспечиваем выборку в пределах [0, 1]
+                texCoords = texCoords - floor(texCoords); // Стабильная замена frac
 
                 // Читаем данные Вороного из текстуры
                 float4 voronoiData = SAMPLE_TEXTURE2D(_VoronoiTexture, sampler_VoronoiTexture, texCoords);

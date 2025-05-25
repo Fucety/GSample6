@@ -16,41 +16,78 @@ public static class VoronoiGeneratorCPU
         public Vector2 textureWorldOffset;
     }
 
-    private static float Frac(float x) => x - Mathf.Floor(x);
-    private static Vector2 Frac(Vector2 v) => new Vector2(Frac(v.x), Frac(v.y));
-    private static Vector2 Floor(Vector2 v) => new Vector2(Mathf.Floor(v.x), Mathf.Floor(v.y));
+    private static float Frac(float x)
+    {
+        int i = (int)x;
+        return x - i;
+    }
+
+    private static Vector2 Frac(Vector2 v)
+    {
+        return new Vector2(Frac(v.x), Frac(v.y));
+    }
+
+    private static Vector2 Floor(Vector2 v)
+    {
+        return new Vector2((int)v.x, (int)v.y);
+    }
 
     private static Vector2 Hash2DTo2D(Vector2 p)
     {
-        float dot1 = Vector2.Dot(p, new Vector2(127.1f, 311.7f));
-        float dot2 = Vector2.Dot(p, new Vector2(269.5f, 183.3f));
-        return Frac(new Vector2(Mathf.Sin(dot1), Mathf.Sin(dot2)) * 43758.5453f);
+        int ix = (int)Mathf.Round(p.x);
+        int iy = (int)Mathf.Round(p.y);
+        uint hash = (uint)(ix * 73856093 ^ iy * 19349663);
+        float rx = (hash % 10000) / 10000.0f;
+        hash = hash * 1664525 + 1013904223;
+        float ry = (hash % 10000) / 10000.0f;
+        return new Vector2(rx, ry);
     }
-
     private static Vector2 SimpleValueNoise2D_CPU(Vector2 p)
     {
         Vector2 i = Floor(p);
         Vector2 f = Frac(p);
-        Vector2 u = new Vector2(f.x * f.x * (3.0f - 2.0f * f.x), f.y * f.y * (3.0f - 2.0f * f.y));
         Vector2 h00 = Hash2DTo2D(i);
         Vector2 h10 = Hash2DTo2D(i + new Vector2(1, 0));
         Vector2 h01 = Hash2DTo2D(i + new Vector2(0, 1));
         Vector2 h11 = Hash2DTo2D(i + new Vector2(1, 1));
-        Vector2 lerpX1 = Vector2.Lerp(h00, h10, u.x);
-        Vector2 lerpX2 = Vector2.Lerp(h01, h11, u.x);
-        return Vector2.Lerp(lerpX1, lerpX2, u.y) * 0.5f;
+        Vector2 lerpX1 = Vector2.Lerp(h00, h10, f.x);
+        Vector2 lerpX2 = Vector2.Lerp(h01, h11, f.x);
+        return Vector2.Lerp(lerpX1, lerpX2, f.y) * 0.5f;
     }
 
     private static Vector4 ComputeVoronoiPixel(int pixelX, int pixelY, int textureSize, MaterialParams matParams)
     {
-        Vector2 uv = new Vector2((float)pixelX / textureSize, (float)pixelY / textureSize);
-        Vector2 coords = uv * matParams.textureWorldSize + matParams.textureWorldOffset;
-        coords.x = coords.x * matParams.textureTransform.x + matParams.textureTransform.z;
-        coords.y = coords.y * matParams.textureTransform.y + matParams.textureTransform.w;
-        coords /= Mathf.Max(matParams.planarStrength, 0.001f);
+        // Вычисляем UV с явным ограничением точности
+        float uvX = (float)pixelX / textureSize;
+        float uvY = (float)pixelY / textureSize;
+        uvX = Mathf.Round(uvX * 10000f) / 10000f;
+        uvY = Mathf.Round(uvY * 10000f) / 10000f;
+        Vector2 uv = new Vector2(uvX, uvY);
+
+        // Применяем преобразования с ограничением точности
+        Vector2 coords = new Vector2(
+            Mathf.Round((uv.x * matParams.textureWorldSize.x + matParams.textureWorldOffset.x) * 10000f) / 10000f,
+            Mathf.Round((uv.y * matParams.textureWorldSize.y + matParams.textureWorldOffset.y) * 10000f) / 10000f
+        );
+        coords = new Vector2(
+            Mathf.Round((coords.x * matParams.textureTransform.x + matParams.textureTransform.z) * 10000f) / 10000f,
+            Mathf.Round((coords.y * matParams.textureTransform.y + matParams.textureTransform.w) * 10000f) / 10000f
+        );
+        coords = new Vector2(
+            Mathf.Round(coords.x / Mathf.Max(matParams.planarStrength, 0.001f) * 10000f) / 10000f,
+            Mathf.Round(coords.y / Mathf.Max(matParams.planarStrength, 0.001f) * 10000f) / 10000f
+        );
+
+        // Применяем шум пертурбации
         Vector2 noiseOffset = SimpleValueNoise2D_CPU(coords * matParams.perturbationScale) * matParams.perturbationStrength;
-        coords += noiseOffset;
-        coords *= Mathf.Max(matParams.voronoiScale, 0.001f);
+        coords = new Vector2(
+            Mathf.Round((coords.x + noiseOffset.x) * 10000f) / 10000f,
+            Mathf.Round((coords.y + noiseOffset.y) * 10000f) / 10000f
+        );
+        coords = new Vector2(
+            Mathf.Round(coords.x * Mathf.Max(matParams.voronoiScale, 0.001f) * 10000f) / 10000f,
+            Mathf.Round(coords.y * Mathf.Max(matParams.voronoiScale, 0.001f) * 10000f) / 10000f
+        );
 
         Vector2 n = Floor(coords);
         Vector2 f = Frac(coords);
@@ -99,7 +136,7 @@ public static class VoronoiGeneratorCPU
 
     public static Texture2D GenerateVoronoiTextureOnCPU(MaterialParams matParams, int textureSize, bool makeNoLongerReadable = true)
     {
-        Texture2D voronoiTexture = new Texture2D(textureSize, textureSize, TextureFormat.RGBAFloat, false);
+        Texture2D voronoiTexture = new Texture2D(textureSize, textureSize, TextureFormat.RGBAHalf, false);
         voronoiTexture.filterMode = FilterMode.Point;
         Color[] pixels = new Color[textureSize * textureSize];
 

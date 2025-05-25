@@ -9,8 +9,8 @@ public class AnimationConfig
     public bool isButton = false;
     public Vector3 targetPosition;
     public float duration = 0.1f;
-    public List<WindowAction> affectedWindows = new List<WindowAction>();
-    public List<WindowType> subscribedEvents = new List<WindowType>();
+    public List<WindowAction> affectedWindows = new();
+    public List<WindowType> subscribedEvents = new();
 }
 
 [System.Serializable]
@@ -100,15 +100,15 @@ public class AnimationManager2 : MonoBehaviour
 
     private UnityEngine.Events.UnityEvent<int> GetEventByType(WindowType type)
     {
-        switch (type)
+        return type switch
         {
-            case WindowType.RewardWindow: return MenuActions.RewardWindow;
-            case WindowType.LanguageWindow: return MenuActions.LanguageWindow;
-            case WindowType.SettingsMenu: return MenuActions.SettingsMenu;
-            case WindowType.ShopWindow: return MenuActions.ShopWindow;
-            case WindowType.SoundWindow: return MenuActions.SoundWindow;
-            default: return null;
-        }
+            WindowType.RewardWindow => MenuActions.RewardWindow,
+            WindowType.LanguageWindow => MenuActions.LanguageWindow,
+            WindowType.SettingsMenu => MenuActions.SettingsMenu,
+            WindowType.ShopWindow => MenuActions.ShopWindow,
+            WindowType.SoundWindow => MenuActions.SoundWindow,
+            _ => null,
+        };
     }
 
     private void HandleEvent(int toggleValue)

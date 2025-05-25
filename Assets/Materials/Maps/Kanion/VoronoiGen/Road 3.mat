@@ -193,8 +193,8 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _StretchScale: {r: 1, g: 1, b: 0, a: 0}
-    - _TextureTransform: {r: 1.42, g: 1.49, b: 0, a: 0}
+    - _TextureTransform: {r: 1.98, g: 1.76, b: 3.07, a: 4.22}
     - _TextureWorldOffset: {r: 0, g: 0, b: 0, a: 0}
-    - _TextureWorldSize: {r: 10, g: 10, b: 0, a: 0}
+    - _TextureWorldSize: {r: 20, g: 20, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

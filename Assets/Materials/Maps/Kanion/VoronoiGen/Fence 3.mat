@@ -149,7 +149,7 @@ Material:
     - _PerturbationStrength: 1
     - _PlanarAxis: 0
     - _PlanarAxisMode: 0
-    - _PlanarStrength: 0.8
+    - _PlanarStrength: 0.4
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _RotationAngle: 0
@@ -180,7 +180,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color1: {r: 0.56, g: 0.56, b: 0.56, a: 1}
-    - _Color2: {r: 0.667, g: 0.667, b: 0.667, a: 1}
+    - _Color2: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 1}
     - _Color3: {r: 0.475, g: 0.475, b: 0.475, a: 1}
     - _ColorA: {r: 0.509434, g: 0.46849322, b: 0.3244037, a: 1}
     - _ColorB: {r: 0, g: 1, b: 0, a: 1}

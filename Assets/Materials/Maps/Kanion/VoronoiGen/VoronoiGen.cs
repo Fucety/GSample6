@@ -59,7 +59,7 @@ public class VoronoiGen : MonoBehaviour
     {
         Vector4 worldSizeVec = mat.HasProperty("_TextureWorldSize") ? mat.GetVector("_TextureWorldSize") : new Vector4(defaultTextureWorldSize.x, defaultTextureWorldSize.y, 0, 0);
         Vector2 actualTextureWorldSize = new Vector2(worldSizeVec.x, worldSizeVec.y);
-        if (actualTextureWorldSize.sqrMagnitude < 0.001f)
+        if (actualTextureWorldSize.sqrMagnitude < 0.001f || actualTextureWorldSize.sqrMagnitude > 1000000f)
         {
             actualTextureWorldSize = defaultTextureWorldSize;
             if (mat.HasProperty("_TextureWorldSize")) mat.SetVector("_TextureWorldSize", new Vector4(actualTextureWorldSize.x, actualTextureWorldSize.y, 0, 0));
@@ -67,15 +67,17 @@ public class VoronoiGen : MonoBehaviour
 
         Vector2 actualTextureWorldOffset = mat.HasProperty("_TextureWorldOffset") ? mat.GetVector("_TextureWorldOffset") : defaultTextureWorldOffset;
 
+        float voronoiScale = Mathf.Clamp(mat.GetFloat("_VoronoiScale"), 0.1f, 100f); // Ограничиваем масштаб
+
         return new VoronoiGeneratorCPU.MaterialParams
         {
-            voronoiScale = mat.GetFloat("_VoronoiScale"),
+            voronoiScale = voronoiScale,
             voronoiJitter = mat.GetFloat("_VoronoiJitter"),
             metricForRamp = mat.GetFloat("_MetricForRamp"),
             perturbationStrength = mat.GetFloat("_PerturbationStrength"),
             perturbationScale = mat.GetFloat("_PerturbationScale"),
-            planarStrength = 1.0f, // Нейтральное значение для генерации
-            textureTransform = new Vector4(1f, 1f, 0f, 0f), // Нейтральное значение для генерации
+            planarStrength = 1.0f,
+            textureTransform = new Vector4(1f, 1f, 0f, 0f),
             textureWorldSize = actualTextureWorldSize,
             textureWorldOffset = actualTextureWorldOffset
         };

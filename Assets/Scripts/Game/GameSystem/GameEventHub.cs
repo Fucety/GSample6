@@ -18,7 +18,7 @@ namespace UshiSoft.UACPF
             GameEvents.OnCoinsAdded.AddListener(OnCoinsAdded);
             GameEvents.OnElimination.AddListener(OnElimination);
             GameEvents.OnPauseToggled.AddListener(OnPauseToggled);
-            GameEvents.OnLapUpdated.AddListener(OnLapUpdated);
+            
         }
 
         private void OnDisable()
@@ -30,7 +30,7 @@ namespace UshiSoft.UACPF
             GameEvents.OnCoinsAdded.RemoveListener(OnCoinsAdded);
             GameEvents.OnElimination.RemoveListener(OnElimination);
             GameEvents.OnPauseToggled.RemoveListener(OnPauseToggled);
-            GameEvents.OnLapUpdated.RemoveListener(OnLapUpdated);
+            
         }
 
         private void OnCountdownStarted(float duration)

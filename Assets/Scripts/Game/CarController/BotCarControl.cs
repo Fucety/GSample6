@@ -1,240 +1,419 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Linq;
 
 namespace UshiSoft.UACPF
 {
     public class BotCarControl : DriverBase
     {
-        [SerializeField] private NavMeshAgent navMeshAgent; // Агент навигации
-        [SerializeField, Range(0f, 1f)] private float bonusUseChance = 0.5f; // Шанс активации бонуса
-        [SerializeField, Range(0.5f, 1f)] private float aggressionLevel = 0.7f; // Уровень агрессии
-        [SerializeField] private float avoidanceDistance = 5f; // Дистанция Raycast
-        [SerializeField] private LayerMask obstacleLayer; // Слой для Raycast
-        [SerializeField] private float backupTime = 1f; // Время движения назад
-        [SerializeField] private float steerAngle = 1f; // Сила поворота
-        [SerializeField] private float waypointWidth = 4f; // Ширина прямоугольника waypoint
-        [SerializeField] private float waypointLength = 4f; // Длина прямоугольника waypoint
-        [SerializeField] private float lookAheadDistance = 2f; // Дистанция направляющей
-        [SerializeField] private float startDelay = 0.2f; // Задержка старта
+        private enum BotState
+        {
+            SeekPoint,  // Движение к контрольной точке
+            SeekBonus,  // Движение к бонусу
+            SeekRival,  // Движение к сопернику
+            Avoid       // Объезд препятствия или машины
+        }
 
-        private Transform[] waypoints; // Точки пути
-        private int currentWaypointIndex; // Текущая точка
-        private IBonus activeBonus; // Текущий бонус
-        private bool isBackingUp; // Движение назад
-        private float backupTimer; // Таймер движения назад
-        private float startTimer; // Таймер задержки старта
+        [Header("Core Setup")]
+        [SerializeField] private NavMeshAgent navMeshAgent;
+        [SerializeField] private LayerMask obstacleLayer;
+        [SerializeField] private LayerMask bonusLayer;
+        [SerializeField] private LayerMask rivalLayer;
+
+        [Header("Behavior")]
+        [SerializeField] private float visionRadius = 20f;
+        [SerializeField] private float targetReachDistance = 3f;
+        [SerializeField, Range(0.3f, 1f)] private float aggressionLevel = 0.7f;
+        [SerializeField] private float maxSteerAngle = 40f;
+
+        [Header("Avoidance")]
+        [SerializeField] private float avoidDistance = 6f;
+        [SerializeField] private float avoidAngle = 45f;
+        [SerializeField] private float avoidTime = 1.2f;
+        [SerializeField] private float reverseTimeOnCollision = 0.6f;
+        [SerializeField] private float reverseThrottle = 0.5f;
+
+        [Header("Misc")]
+        [SerializeField] private float pathUpdateInterval = 0.5f;
+        [SerializeField] private float steerSmoothTime = 0.15f;
+        [SerializeField] private float startDelay = 0.2f;
+        [SerializeField] private float pointSearchRadius = 25f;
+
+        [Header("Debug Gizmos")]
+        [SerializeField] private bool showTargetGizmo = true;
+        [SerializeField] private bool showDistanceGizmos = true;
+
+        private BotState currentState;
+        private Vector3 targetPosition;
+        private float avoidTimer;
+        private float startTimer;
+        private float pathUpdateTimerInternal;
+        private float currentSteerInput;
+        private float steerVelocity;
+        private bool isReversing;
+        private BonusHandler bonusHandler;
 
         protected override void Awake()
         {
             base.Awake();
-            waypoints = TrackManager.Instance.Waypoints;
+            bonusHandler = GetComponent<BonusHandler>();
+            if (bonusHandler == null) Debug.LogError("BonusHandler не найден!", this);
+            InitializeNavMeshAgent();
+            startTimer = startDelay;
+            RespawnAndSetInitialTarget();
+        }
+
+        private void InitializeNavMeshAgent()
+        {
+            if (navMeshAgent == null) navMeshAgent = GetComponent<NavMeshAgent>();
+            if (navMeshAgent == null) { Debug.LogError("NavMeshAgent не найден!", this); enabled = false; return; }
+
             navMeshAgent.updatePosition = false;
             navMeshAgent.updateRotation = false;
-            navMeshAgent.speed = 15f * aggressionLevel;
-            navMeshAgent.angularSpeed = 360f; // Плавные повороты
-            navMeshAgent.acceleration = 30f; // Быстрая реакция
-            navMeshAgent.avoidancePriority = Mathf.FloorToInt(aggressionLevel * 100); // Приоритет RVO
-            navMeshAgent.radius = 1f; // Радиус избегания
-            startTimer = startDelay; // Инициализация задержки
+            navMeshAgent.stoppingDistance = targetReachDistance * 0.5f;
+            navMeshAgent.speed = 15f;
+            navMeshAgent.acceleration = 20f;
+            navMeshAgent.angularSpeed = 240f;
+            navMeshAgent.radius = 1.0f;
+            navMeshAgent.autoRepath = false;
+        }
+
+        private void RespawnAndSetInitialTarget()
+        {
+            if (navMeshAgent != null && navMeshAgent.isOnNavMesh) navMeshAgent.Warp(transform.position);
+            targetPosition = GetRandomPoint();
+            currentState = BotState.SeekPoint;
+            RecalculatePathToTarget();
         }
 
         protected override void Drive()
         {
-            if (waypoints.Length == 0 || GameManager.Instance.State != GameState.Racing) return;
+            if (GameManager.Instance.State != GameState.Racing || navMeshAgent == null) return;
 
-            // Задержка старта
             if (startTimer > 0f)
             {
                 startTimer -= Time.deltaTime;
                 _carController.ThrottleInput = 0f;
                 _carController.SteerInput = 0f;
                 _carController.BrakeInput = 1f;
+                _carController.Reverse = false;
                 return;
             }
 
-            // Проверка waypoints всегда
-            Vector3 targetPos = waypoints[currentWaypointIndex].position;
-            if (IsInsideWaypointRect(transform.position, targetPos))
-            {
-                currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
-            }
+            isReversing = false;
 
-            if (isBackingUp)
+            if (currentState == BotState.Avoid)
             {
-                UpdateBackup();
+                UpdateAvoid();
             }
             else
             {
-                UpdateNavigation();
-                UpdateBonusUsage();
+                if (CheckForImmediateObstacles())
+                {
+                    UpdateAvoid();
+                }
+                else
+                {
+                    UpdateStateAndTarget();
+                    MoveToCurrentTarget();
+                }
             }
+            ApplyCarInputs();
         }
 
-        private void UpdateNavigation()
+        private void UpdateStateAndTarget()
         {
-            // Проверка достижимости точки
-            Vector3 targetPos = waypoints[currentWaypointIndex].position;
-            NavMeshPath path = new NavMeshPath();
-            if (!navMeshAgent.CalculatePath(targetPos, path) || path.status != NavMeshPathStatus.PathComplete)
+            pathUpdateTimerInternal -= Time.deltaTime;
+            if (pathUpdateTimerInternal > 0f && currentState != BotState.SeekPoint && targetPosition != Vector3.zero) return;
+
+            pathUpdateTimerInternal = pathUpdateInterval;
+
+            if (bonusHandler != null && !bonusHandler.HasBonus)
             {
-                currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.Length;
-                return;
-            }
-
-            navMeshAgent.SetDestination(targetPos);
-
-            // Управление, только если есть путь
-            if (!navMeshAgent.hasPath) return;
-
-            // Ограничение направляющей
-            Vector3 steeringTarget = navMeshAgent.steeringTarget;
-            Vector3 directionToTarget = (steeringTarget - transform.position).normalized;
-            steeringTarget = transform.position + directionToTarget * Mathf.Min(Vector3.Distance(transform.position, steeringTarget), lookAheadDistance);
-
-            // Управление
-            Vector3 direction = (steeringTarget - transform.position).normalized;
-            float steerInput = Vector3.Dot(direction, transform.right) * aggressionLevel;
-            steerInput = Mathf.Clamp(steerInput, -1f, 1f);
-
-            // Raycast для избегания
-            Vector3[] rayDirections = { transform.forward, Quaternion.Euler(0, 45, 0) * transform.forward, Quaternion.Euler(0, -45, 0) * transform.forward };
-            foreach (var dir in rayDirections)
-            {
-                if (Physics.Raycast(transform.position, dir, out RaycastHit hit, avoidanceDistance, obstacleLayer))
+                Collider nearestBonus = FindNearestCollider(bonusLayer, visionRadius);
+                if (nearestBonus != null)
                 {
-                    Vector3 avoidDir = (transform.position - hit.point).normalized;
-                    steerInput += Vector3.Dot(avoidDir, transform.right) * 0.4f;
-                    steerInput = Mathf.Clamp(steerInput, -1f, 1f);
+                    // Отключаем NavMeshAgent при обнаружении бонуса, как и в режиме точки
+                    if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+                    SetNewTarget(nearestBonus.transform.position, BotState.SeekBonus);
+                    return;
                 }
             }
 
-            _carController.SteerInput = steerInput;
-            _carController.ThrottleInput = aggressionLevel;
-            _carController.BrakeInput = Random.value < (1f - aggressionLevel) / 2 ? 0.3f : 0f;
-            _carController.Reverse = false; // Движение вперёд
-        }
-
-        private bool IsInsideWaypointRect(Vector3 botPos, Vector3 waypointPos)
-        {
-            Vector3 nextWaypointPos = currentWaypointIndex + 1 < waypoints.Length ? waypoints[currentWaypointIndex + 1].position : waypoints[0].position;
-            Vector3 forward = (nextWaypointPos - waypointPos).normalized;
-            Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
-
-            Vector3 localPos = botPos - waypointPos;
-            float x = Vector3.Dot(localPos, right); // Координата по ширине
-            float z = Vector3.Dot(localPos, forward); // Координата по длине
-
-            return Mathf.Abs(x) <= waypointWidth / 2f && Mathf.Abs(z) <= waypointLength / 2f;
-        }
-
-        private void UpdateBackup()
-        {
-            if (!isBackingUp) return;
-
-            // Отключить NavMeshAgent во время отъезда
-            navMeshAgent.enabled = false;
-
-            backupTimer -= Time.deltaTime;
-            if (backupTimer <= 0f)
+            if (bonusHandler != null && (bonusHandler.HasBonus || Random.value < aggressionLevel * 0.2f))
             {
-                isBackingUp = false;
-                _carController.Reverse = false; // Возвращаем вперёд
-                navMeshAgent.enabled = true; // Включаем NavMeshAgent
+                Collider nearestRival = FindNearestCollider(rivalLayer, visionRadius, gameObject);
+                if (nearestRival != null)
+                {
+                    SetNewTarget(nearestRival.transform.position, BotState.SeekRival);
+                    return;
+                }
+            }
+
+            if (currentState != BotState.SeekPoint || !IsTargetValid(targetPosition) || Vector3.Distance(transform.position, targetPosition) < targetReachDistance)
+            {
+                SetNewTarget(GetRandomPoint(), BotState.SeekPoint);
+            }
+            else if (navMeshAgent.enabled && (!navMeshAgent.hasPath || navMeshAgent.isPathStale))
+            {
+                RecalculatePathToTarget();
+            }
+        }
+
+        private void SetNewTarget(Vector3 newPos, BotState newState)
+        {
+            targetPosition = newPos;
+            if (currentState != newState || Vector3.Distance(targetPosition, navMeshAgent.destination) > 1f)
+            {
+                currentState = newState;
+                RecalculatePathToTarget();
+            }
+        }
+
+        private bool CheckForImmediateObstacles()
+        {
+            Vector3[] rayDirs = {
+                transform.forward,
+                Quaternion.Euler(0, avoidAngle, 0) * transform.forward,
+                Quaternion.Euler(0, -avoidAngle, 0) * transform.forward
+            };
+
+            foreach (var dir in rayDirs)
+            {
+                if (Physics.Raycast(transform.position + transform.up * 0.5f, dir, out RaycastHit hit, avoidDistance, obstacleLayer | rivalLayer))
+                {
+                    if (hit.collider.gameObject == gameObject) continue;
+
+                    currentState = BotState.Avoid;
+                    avoidTimer = avoidTime;
+                    if (navMeshAgent.enabled) navMeshAgent.ResetPath();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void MoveToCurrentTarget()
+        {
+            if (Vector3.Distance(transform.position, targetPosition) < targetReachDistance)
+            {
+                if (currentState == BotState.SeekRival && bonusHandler != null && bonusHandler.HasBonus)
+                {
+                    UseBonus(true);
+                }
+                pathUpdateTimerInternal = -1f;
                 return;
             }
 
-            // Проверяем Raycast
-            bool hitLeft = Physics.Raycast(transform.position, Quaternion.Euler(0, -45, 0) * transform.forward, avoidanceDistance, obstacleLayer);
-            bool hitCenter = Physics.Raycast(transform.position, transform.forward, avoidanceDistance, obstacleLayer);
-            bool hitRight = Physics.Raycast(transform.position, Quaternion.Euler(0, 45, 0) * transform.forward, avoidanceDistance, obstacleLayer);
+            if (navMeshAgent.enabled && (!navMeshAgent.hasPath || navMeshAgent.isPathStale || Vector3.Distance(navMeshAgent.destination, targetPosition) > 0.5f))
+            {
+                RecalculatePathToTarget();
+            }
+        }
 
-            // Логика поворота
-            float steerInput = 0f;
-            if (hitLeft && hitCenter && hitRight)
+        private void UpdateAvoid()
+        {
+            avoidTimer -= Time.deltaTime;
+            if (avoidTimer <= 0f)
             {
-                steerInput = 0f; // Ровно назад
-            }
-            else if (hitLeft && hitCenter)
-            {
-                steerInput = -steerAngle; // Назад влево
-            }
-            else if (hitRight && hitCenter)
-            {
-                steerInput = steerAngle; // Назад вправо
-            }
-            else if (hitLeft)
-            {
-                steerInput = steerAngle; // Сильный поворот вправо
-            }
-            else if (hitRight)
-            {
-                steerInput = -steerAngle; // Сильный поворот влево
+                currentState = BotState.SeekPoint;
+                targetPosition = GetRandomPoint();
+                RecalculatePathToTarget();
+                return;
             }
 
-            // Движение назад
-            _carController.Reverse = true;
-            _carController.ThrottleInput = 0.5f; // Положительный вход для заднего хода
+            if (navMeshAgent.enabled) navMeshAgent.enabled = false;
+
+            RaycastHit hitFwd, hitLeft, hitRight;
+            bool obsFwd = Physics.Raycast(transform.position + transform.up * 0.5f, transform.forward, out hitFwd, avoidDistance, obstacleLayer | rivalLayer);
+            bool obsLeft = Physics.Raycast(transform.position + transform.up * 0.5f, Quaternion.Euler(0, -avoidAngle, 0) * transform.forward, out hitLeft, avoidDistance * 0.8f, obstacleLayer | rivalLayer);
+            bool obsRight = Physics.Raycast(transform.position + transform.up * 0.5f, Quaternion.Euler(0, avoidAngle, 0) * transform.forward, out hitRight, avoidDistance * 0.8f, obstacleLayer | rivalLayer);
+
+            float steer = 0;
+            float throttle = aggressionLevel * 0.6f;
+            isReversing = false;
+
+            if (obsFwd || (obsLeft && obsRight))
+            {
+                isReversing = true;
+                throttle = reverseThrottle;
+                if (obsLeft && !obsRight) steer = 1f;
+                else if (obsRight && !obsLeft) steer = -1f;
+                else steer = (Random.value > 0.5f) ? 1f : -1f;
+            }
+            else if (obsLeft) steer = 1f;
+            else if (obsRight) steer = -1f;
+
+            _carController.SteerInput = steer;
+            currentSteerInput = steer;
+            _carController.ThrottleInput = throttle;
             _carController.BrakeInput = 0f;
-            _carController.SteerInput = steerInput;
+            _carController.Reverse = isReversing;
+        }
+
+        private void ApplyCarInputs()
+        {
+            if (currentState == BotState.Avoid) return;
+
+            if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
+            if (!navMeshAgent.isOnNavMesh) { TryWarpToNavMesh(); return; }
+
+            if (!navMeshAgent.hasPath || navMeshAgent.pathPending)
+            {
+                _carController.ThrottleInput = 0f;
+                _carController.SteerInput = 0f;
+                _carController.BrakeInput = 0.1f;
+                _carController.Reverse = false;
+                return;
+            }
+
+            Vector3 steeringTargetPos = navMeshAgent.steeringTarget;
+            Vector3 dirToSteeringTarget = (steeringTargetPos - transform.position).normalized;
+            float angleToTarget = Vector3.SignedAngle(transform.forward, dirToSteeringTarget, Vector3.up);
+
+            float steer = Mathf.Clamp(angleToTarget / maxSteerAngle, -1f, 1f);
+            currentSteerInput = Mathf.SmoothDamp(currentSteerInput, steer, ref steerVelocity, steerSmoothTime);
+
+            float throttle = aggressionLevel;
+            if (Mathf.Abs(angleToTarget) > 30f) throttle *= 0.6f;
+
+            float brake = 0f;
+            if (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance + targetReachDistance)
+            {
+                throttle *= Mathf.Clamp01(navMeshAgent.remainingDistance / (targetReachDistance + 0.1f));
+                brake = 0.3f;
+            }
+
+            _carController.ThrottleInput = throttle;
+            _carController.SteerInput = currentSteerInput;
+            _carController.BrakeInput = brake;
+            _carController.Reverse = false;
+
+            if (currentState == BotState.SeekRival && bonusHandler != null && bonusHandler.HasBonus)
+            {
+                UseBonus(false);
+            }
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Opponent"))
+            if (currentState == BotState.Avoid && avoidTimer > reverseTimeOnCollision * 0.5f) return;
+
+            bool isSignificantCollision = ((1 << collision.gameObject.layer) & (obstacleLayer | rivalLayer)) != 0;
+            if (isSignificantCollision && collision.gameObject != gameObject)
             {
-                isBackingUp = true;
-                backupTimer = backupTime;
+                currentState = BotState.Avoid;
+                avoidTimer = reverseTimeOnCollision;
+                if (navMeshAgent.enabled) navMeshAgent.ResetPath();
+
+                isReversing = true;
+                _carController.ThrottleInput = reverseThrottle;
+
+                Vector3 relativeContact = transform.InverseTransformPoint(collision.contacts[0].point);
+                _carController.SteerInput = (relativeContact.x > 0) ? -1f : 1f;
+                currentSteerInput = _carController.SteerInput;
+
+                _carController.Reverse = isReversing;
             }
         }
 
-        private void UpdateBonusUsage()
+        private Collider FindNearestCollider(LayerMask layer, float radius, GameObject selfToIgnore = null)
         {
-            if (activeBonus != null && Random.value < bonusUseChance * Time.deltaTime)
-            {
-                activeBonus.Activate(_carController);
-                activeBonus = null;
-            }
+            return Physics.OverlapSphere(transform.position, radius, layer)
+                .Where(c => (selfToIgnore == null || c.gameObject != selfToIgnore) && 
+                            !Physics.Linecast(transform.position + transform.up * 0.5f, c.bounds.center, obstacleLayer))
+                .OrderBy(c => Vector3.Distance(transform.position, c.transform.position))
+                .FirstOrDefault();
         }
 
-        public void SetBonus(IBonus bonus)
+        private Vector3 GetRandomPoint()
         {
-            activeBonus = bonus;
-        }
-
-        private void OnDrawGizmos()
-        {
-            // Отладка Raycast
-            Gizmos.color = Color.red;
-            Vector3[] rayDirections = { transform.forward, Quaternion.Euler(0, 45, 0) * transform.forward, Quaternion.Euler(0, -45, 0) * transform.forward };
-            foreach (var dir in rayDirections)
+            for (int i = 0; i < 10; i++)
             {
-                Gizmos.DrawRay(transform.position, dir * avoidanceDistance);
-            }
-
-            // Отладка прямоугольников waypoints
-            if (waypoints != null && waypoints.Length > 0)
-            {
-                Gizmos.color = Color.green;
-                for (int i = 0; i < waypoints.Length; i++)
+                Vector3 randomDir = transform.position + Random.insideUnitSphere * pointSearchRadius;
+                if (NavMesh.SamplePosition(randomDir, out NavMeshHit hit, pointSearchRadius, NavMesh.AllAreas) &&
+                    Vector3.Distance(hit.position, transform.position) > targetReachDistance)
                 {
-                    Vector3 pos = waypoints[i].position;
-                    Vector3 nextPos = i + 1 < waypoints.Length ? waypoints[i + 1].position : waypoints[0].position;
-                    Vector3 forward = (nextPos - pos).normalized;
-                    Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
+                    return hit.position;
+                }
+            }
+            if (NavMesh.SamplePosition(transform.position + transform.forward * 10f, out NavMeshHit fwdHit, 10f, NavMesh.AllAreas))
+                return fwdHit.position;
+            return transform.position;
+        }
 
-                    Vector3[] corners = {
-                        pos + forward * (waypointLength / 2f) + right * (waypointWidth / 2f),
-                        pos + forward * (waypointLength / 2f) - right * (waypointWidth / 2f),
-                        pos - forward * (waypointLength / 2f) - right * (waypointWidth / 2f),
-                        pos - forward * (waypointLength / 2f) + right * (waypointWidth / 2f)
-                    };
+        private bool IsTargetValid(Vector3 position)
+        {
+            if (Vector3.Distance(transform.position, position) < targetReachDistance * 0.5f) return false;
+            if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
+            bool isValid = navMeshAgent.CalculatePath(position, new NavMeshPath());
+            return isValid;
+        }
 
-                    Gizmos.DrawLine(corners[0], corners[1]);
-                    Gizmos.DrawLine(corners[1], corners[2]);
-                    Gizmos.DrawLine(corners[2], corners[3]);
-                    Gizmos.DrawLine(corners[3], corners[0]);
+        private void RecalculatePathToTarget()
+        {
+            if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
+            if (!navMeshAgent.isOnNavMesh) { if (!TryWarpToNavMesh()) return; }
+
+            if (!navMeshAgent.SetDestination(targetPosition))
+            {
+                targetPosition = GetRandomPoint();
+                navMeshAgent.SetDestination(targetPosition);
+            }
+        }
+
+        private bool TryWarpToNavMesh()
+        {
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                navMeshAgent.Warp(hit.position);
+                if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
+                return true;
+            }
+            return false;
+        }
+
+        private void UseBonus(bool forceUse)
+        {
+            if (bonusHandler != null && bonusHandler.HasBonus && forceUse)
+            {
+                bonusHandler.ActivateBonus();
+                pathUpdateTimerInternal = -1f;
+            }
+        }
+
+#if UNITY_EDITOR
+        private void OnDrawGizmosSelected()
+        {
+            if (showTargetGizmo && targetPosition != Vector3.zero)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawLine(transform.position + Vector3.up * 0.5f, targetPosition + Vector3.up * 0.5f);
+                Gizmos.DrawSphere(targetPosition + Vector3.up * 0.5f, 0.5f);
+            }
+
+            if (showDistanceGizmos)
+            {
+                Gizmos.color = new Color(0f, 1f, 0.5f, 0.2f);
+                Gizmos.DrawWireSphere(transform.position, visionRadius);
+
+                Gizmos.color = new Color(1f, 0.7f, 0f, 0.2f);
+                Gizmos.DrawWireSphere(transform.position, pointSearchRadius);
+
+                Gizmos.color = Color.red;
+                Vector3 up = Vector3.up * 0.5f;
+                Vector3[] rayDirs = {
+                    transform.forward,
+                    Quaternion.Euler(0, avoidAngle, 0) * transform.forward,
+                    Quaternion.Euler(0, -avoidAngle, 0) * transform.forward
+                };
+                foreach (var dir in rayDirs)
+                {
+                    Gizmos.DrawRay(transform.position + up, dir * avoidDistance);
                 }
             }
         }
+#endif
     }
 }

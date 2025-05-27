@@ -27,18 +27,19 @@ namespace UshiSoft.UACPF
         [SerializeField] private bool debugMobileMode = false; // Режим отладки: имитировать мобильное устройство в редакторе
 
         private IInputProvider inputProvider; // Провайдер ввода (клавиатура или сенсор)
-        private IBonus activeBonus; // Текущий активный бонус
+        private BonusHandler bonusHandler; // Обработчик бонусов
 
         protected override void Awake()
         {
             base.Awake();
             InitializeInputProvider();
+            bonusHandler = GetComponent<BonusHandler>();
+            if (bonusHandler == null) Debug.LogError("BonusHandler не найден!", this);
         }
 
         // Инициализация провайдера ввода в зависимости от платформы или режима отладки
         private void InitializeInputProvider()
         {
-            // Используем сенсорный ввод, если это мобильное устройство или включён режим отладки
             if ((Application.isMobilePlatform || (debugMobileMode && Application.isEditor)) && touchInputController != null)
             {
                 inputProvider = touchInputController; // Сенсорный ввод для смартфонов или отладки
@@ -58,7 +59,6 @@ namespace UshiSoft.UACPF
 
         protected override void Stop()
         {
-            // Полная остановка: максимальный тормоз, плавное отпускание газа
             _carController.BrakeInput = 1f;
             var throttleInput = inputProvider.GetThrottleInput();
             var time = throttleInput != 0f ? throttleTime : throttleReleaseTime;
@@ -71,7 +71,6 @@ namespace UshiSoft.UACPF
             var maxSteerInput = 1f;
             if (steerLimitByFriction)
             {
-                // Ограничение угла поворота на основе трения и скорости
                 var speed = _carController.Speed;
                 var minTurnR = (speed * speed) / (steerMu * Physics.gravity.magnitude);
                 if (minTurnR > 0f)
@@ -86,7 +85,6 @@ namespace UshiSoft.UACPF
 
             var time = steerInput != 0f ? steerTime : steerReleaseTime;
 
-            // Плавный поворот руля, сбрасываем при смене направления
             if (steerInput != 0f && Mathf.Sign(steerInput) != Mathf.Sign(_carController.SteerInput))
                 _carController.SteerInput = 0f;
 
@@ -99,7 +97,6 @@ namespace UshiSoft.UACPF
             var throttleInput = inputProvider.GetThrottleInput();
             var brakeInput = inputProvider.GetBrakeInput();
 
-            // Автоматическое переключение на задний ход
             if (autoShiftToReverse && _carController.IsGrounded())
             {
                 var speedKPH = _carController.ForwardSpeed * UshiMath.MPSToKPH;
@@ -114,16 +111,13 @@ namespace UshiSoft.UACPF
                         _carController.Reverse = true;
                 }
 
-                // Инверсия газа и тормоза при движении назад
                 if (_carController.Reverse)
                     (throttleInput, brakeInput) = (brakeInput, throttleInput);
             }
 
-            // Плавное изменение газа
             var throttleTime = throttleInput != 0f ? this.throttleTime : throttleReleaseTime;
             _carController.ThrottleInput = Mathf.MoveTowards(_carController.ThrottleInput, throttleInput, Time.deltaTime / throttleTime);
 
-            // Плавное изменение тормоза
             var brakeTime = brakeInput != 0f ? this.brakeTime : brakeReleaseTime;
             _carController.BrakeInput = Mathf.MoveTowards(_carController.BrakeInput, brakeInput, Time.deltaTime / brakeTime);
         }
@@ -131,17 +125,10 @@ namespace UshiSoft.UACPF
         // Проверка активации бонуса
         private void CheckBonusActivation()
         {
-            if (inputProvider.IsBonusActivated() && activeBonus != null)
+            if (inputProvider.IsBonusActivated() && bonusHandler != null)
             {
-                activeBonus.Activate(_carController);
-                activeBonus = null; // Сбрасываем бонус после использования
+                bonusHandler.ActivateBonus();
             }
-        }
-
-        // Установка нового бонуса
-        public void SetBonus(IBonus bonus)
-        {
-            activeBonus = bonus;
         }
     }
 }

@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 5654046373481588730}
   - component: {fileID: 753227711059236502}
   - component: {fileID: 4576682305423089459}
+  - component: {fileID: 5131037594665266422}
   m_Layer: 0
   m_Name: Base1
   m_TagString: Untagged
@@ -280,6 +281,18 @@ MonoBehaviour:
   switchToReverseSpeedKPH: 1
   touchInputController: {fileID: 0}
   debugMobileMode: 0
+--- !u!114 &5131037594665266422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6032882816936506424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5759203829eb5604a967b0e67cbaaa9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6978077066088167824
 GameObject:
   m_ObjectHideFlags: 0

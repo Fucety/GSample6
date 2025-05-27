@@ -16,12 +16,13 @@ namespace UshiSoft.UACPF
     {
         public static GameManager Instance { get; private set; }
 
-        [SerializeField] private int totalLaps = 3; // Количество кругов
         [SerializeField] private float startDelay = 3f; // Задержка перед стартом (сек)
         [SerializeField] private List<CarControllerBase> racers; // Все участники гонки
+        [SerializeField] private float raceDuration = 180f; // Длительность заезда (сек)
 
         private GameState state = GameState.Waiting; // Текущее состояние
         private float startTimer; // Таймер старта
+        private float raceTimer; // Таймер гонки
         private int playerCoins; // Монеты игрока
         private int playerEliminations; // Количество устранённых соперников
         private CarControllerBase playerCar; // Машина игрока
@@ -37,21 +38,18 @@ namespace UshiSoft.UACPF
             else
             {
                 Destroy(gameObject);
+                return;
             }
 
             // Находим машину игрока
             playerCar = racers.Find(r => r.GetComponent<PlayerCarControl>() != null);
-
-            // Регистрируем всех гонщиков в TrackManager
-            foreach (var racer in racers)
-            {
-                TrackManager.Instance.RegisterRacer(racer);
-            }
+            Debug.Log("GameManager Awake: " + gameObject.name); // Отладка
         }
 
         private void Start()
         {
             startTimer = startDelay;
+            raceTimer = raceDuration;
             GameEvents.OnCountdownStarted.Invoke(startDelay); // Запускаем обратный отсчёт
         }
 
@@ -65,6 +63,14 @@ namespace UshiSoft.UACPF
                     StartRace();
                 }
             }
+            else if (state == GameState.Racing)
+            {
+                raceTimer -= Time.deltaTime;
+                if (raceTimer <= 0f)
+                {
+                    FinishRace();
+                }
+            }
         }
 
         // Запуск гонки
@@ -74,7 +80,9 @@ namespace UshiSoft.UACPF
             foreach (var racer in racers)
             {
                 racer.enabled = true; // Включаем управление
+                racer.GetComponent<CheckpointTrigger>().Respawn(); // Спавн всех машин
             }
+            Debug.Log("StartRace: гонка началась. Вызывается OnRaceStarted.");
             GameEvents.OnRaceStarted.Invoke();
         }
 
@@ -89,24 +97,23 @@ namespace UshiSoft.UACPF
                 racer.enabled = false; // Отключаем управление
             }
 
-            // Определяем позицию игрока
+            // Определяем позицию игрока (по количеству устранений)
             int playerPosition = CalculatePlayerPosition();
             int placeCoins = playerPosition switch
             {
                 1 => 300, // 1-е место
                 2 => 200, // 2-е место
                 3 => 100, // 3-е место
-                4 => 50,  // 4-е место
                 _ => 0
             };
             AddCoins(placeCoins + playerEliminations * 50); // Награда за место и устранения
             GameEvents.OnRaceFinished.Invoke(playerPosition, playerCoins, playerEliminations);
         }
 
-        // Расчёт позиции игрока
+        // Расчёт позиции игрока по количеству устранений
         private int CalculatePlayerPosition()
         {
-            var sortedRacers = racers.OrderByDescending(r => TrackManager.Instance.GetProgress(r)).ToList();
+            var sortedRacers = racers.OrderByDescending(r => r.GetComponent<CarHealth>().Eliminations).ToList();
             return sortedRacers.IndexOf(playerCar) + 1;
         }
 
@@ -120,10 +127,19 @@ namespace UshiSoft.UACPF
         // Регистрация устранения
         public void RegisterElimination(CarControllerBase eliminatedCar)
         {
-            if (state != GameState.Racing || eliminatedCar == playerCar) return;
-            playerEliminations++;
-            AddCoins(50); // Награда за устранение
+            if (state != GameState.Racing) return;
+
+            // Если игрок жив, добавляем ему устранение
+            if (playerCar != null && playerCar.gameObject.activeInHierarchy)
+            {
+                playerEliminations++;
+                playerCar.GetComponent<CarHealth>().AddElimination();
+                AddCoins(50); // Награда за устранение
+            }
+
             GameEvents.OnElimination.Invoke(eliminatedCar);
+            // Ресспавн устранённой машины
+            eliminatedCar.GetComponent<CarHealth>().Respawn();
         }
 
         // Пауза/возобновление
@@ -143,14 +159,7 @@ namespace UshiSoft.UACPF
             }
         }
 
-        // Обновление круга (вызывается из TrackManager)
-        public void UpdateLap(int currentLap, int totalLaps)
-        {
-            GameEvents.OnLapUpdated.Invoke(currentLap, totalLaps);
-        }
-
         public GameState State => state;
         public CarControllerBase PlayerCar => playerCar;
-        public int TotalLaps => totalLaps;
     }
 }

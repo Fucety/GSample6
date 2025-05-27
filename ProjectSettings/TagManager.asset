@@ -5,8 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Opponent
-  - Wall
-  - Checkpoint
+  - Bot
   layers:
   - Default
   - TransparentFX
@@ -14,8 +13,8 @@ TagManager:
   - Obstacle
   - Water
   - UI
-  - 
-  - 
+  - Rival
+  - Bonus
   - 
   - 
   - 

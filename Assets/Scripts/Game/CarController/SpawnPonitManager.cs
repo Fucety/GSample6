@@ -8,38 +8,40 @@ namespace UshiSoft.UACPF
     {
         public static SpawnPointManager Instance { get; private set; }
 
-        [SerializeField] private Transform[] spawnPoints; // Точки спавна
-        [SerializeField] private float spawnCooldown = 5f; // Время деактивации точки после спавна
-        [SerializeField] private float spawnRadius = 2f; // Радиус проверки для предотвращения наложения
-        [SerializeField] private LayerMask carLayer; // Слой для машин (игрок и боты)
+        [SerializeField] private Transform[] spawnPoints; // Точки спавна, назначаемые в инспекторе для каждой сцены
+        [SerializeField] private float spawnCooldown = 5f;
+        [SerializeField] private float spawnRadius = 2f;
+        [SerializeField] private LayerMask carLayer;
 
-        private Dictionary<Transform, float> spawnCooldowns; // Таймеры для точек спавна
+        private Dictionary<Transform, float> spawnCooldowns = new Dictionary<Transform, float>();
 
         private void Awake()
         {
-            // Singleton
+            // Если это самый первый экземпляр, он становится вечным синглтоном
             if (Instance == null)
             {
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
+                InitializeSpawnPoints(spawnPoints); // Инициализируем его собственными точками
             }
+            // Если экземпляр уже существует, значит, это загрузилась новая сцена
             else
             {
+                // Передаем точки из нового менеджера старому (вечному)
+                Instance.InitializeSpawnPoints(spawnPoints);
+                // После передачи данных этот дубликат можно удалить
                 Destroy(gameObject);
-            }
-
-            // Инициализация таймеров
-            spawnCooldowns = new Dictionary<Transform, float>();
-            foreach (var point in spawnPoints)
-            {
-                spawnCooldowns[point] = 0f;
             }
         }
 
         private void Update()
         {
-            // Обновление таймеров
-            foreach (var point in spawnPoints)
+            // Обновляем таймеры только у активного экземпляра
+            if (Instance != this) return;
+
+            // Копируем ключи, чтобы избежать ошибки изменения коллекции во время итерации
+            var points = new List<Transform>(spawnCooldowns.Keys);
+            foreach (var point in points)
             {
                 if (spawnCooldowns[point] > 0f)
                 {
@@ -48,12 +50,39 @@ namespace UshiSoft.UACPF
             }
         }
 
-        // Получение доступной точки спавна
+        // Логика инициализации вынесена в отдельный метод, чтобы ее можно было вызывать повторно
+        private void InitializeSpawnPoints(Transform[] newPoints)
+        {
+            // Обновляем список точек и полностью пересоздаем словарь кулдаунов
+            spawnPoints = newPoints;
+            spawnCooldowns.Clear();
+
+            if (spawnPoints == null || spawnPoints.Length == 0)
+            {
+                Debug.LogWarning("SpawnPointManager: В этой сцене не назначено ни одной точки спавна!");
+                return;
+            }
+
+            foreach (var point in spawnPoints)
+            {
+                if(point != null) // Добавлена проверка на null
+                {
+                    spawnCooldowns[point] = 0f;
+                }
+            }
+            Debug.Log($"[SpawnPointManager] Инициализировано {spawnCooldowns.Count} новых точек спавна.");
+        }
+
         public Transform GetAvailableSpawnPoint()
         {
-            // Фильтруем активные точки (без кулдауна и без машин поблизости)
+            if (spawnPoints == null || spawnPoints.Length == 0)
+            {
+                return null;
+            }
+
+            // Фильтруем активные точки
             var availablePoints = spawnPoints
-                .Where(p => spawnCooldowns[p] <= 0f && !IsOccupied(p.position))
+                .Where(p => p != null && spawnCooldowns.ContainsKey(p) && spawnCooldowns[p] <= 0f && !IsOccupied(p.position))
                 .ToList();
 
             if (availablePoints.Count == 0)
@@ -65,16 +94,17 @@ namespace UshiSoft.UACPF
             return availablePoints[Random.Range(0, availablePoints.Count)];
         }
 
-        // Проверка, занята ли точка
         private bool IsOccupied(Vector3 position)
         {
+            // Проверяем, есть ли машины в радиусе точки спавна
             return Physics.OverlapSphere(position, spawnRadius, carLayer).Length > 0;
         }
 
-        // Установка кулдауна для точки спавна
+
+
         public void SetSpawnCooldown(Transform spawnPoint)
         {
-            if (spawnCooldowns.ContainsKey(spawnPoint))
+            if (spawnPoint != null && spawnCooldowns.ContainsKey(spawnPoint))
             {
                 spawnCooldowns[spawnPoint] = spawnCooldown;
             }

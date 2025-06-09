@@ -7,11 +7,16 @@ namespace UshiSoft.UACPF
     {
         public static CurrencyManager Instance { get; private set; }
 
-        private int coins; // Обычные монеты
-        private int premium; // Премиум-валюта
+        [SerializeField] private float comboWindow = 10f; // Время для комбо (сек)
+        [SerializeField] private float comboMultiplier = 1.25f; // Множитель за комбо (+25%)
+
+        private int coins; // Текущие монеты
+        private float lastEliminationTime; // Время последнего устранения
+        private int comboCount; // Текущий счётчик комбо
 
         private void Awake()
         {
+            // Singleton: обеспечиваем единственный экземпляр
             if (Instance == null)
             {
                 Instance = this;
@@ -25,52 +30,92 @@ namespace UshiSoft.UACPF
 
         private async void Start()
         {
-            // Загрузка сохранённых данных
-           // coins = await YandexGamesIntegration.Instance.LoadPlayerData("coins", 0);
-           // premium = await YandexGamesIntegration.Instance.LoadPlayerData("premium", 0);
+            // Загрузка сохранённых монет через Yandex Games SDK
+            coins = await LoadCoinsAsync();
             UIManager.Instance.UpdateCoins(coins);
-            UIManager.Instance.UpdatePremium(premium);
         }
 
+        // Добавление монет за устранение с учётом комбо
+        public void AddCoinsForElimination(int baseAmount)
+        {
+            float currentTime = Time.time;
+            bool isCombo = (currentTime - lastEliminationTime) <= comboWindow;
+
+            // Увеличиваем счётчик комбо, если в окне комбо
+            if (isCombo)
+            {
+                comboCount++;
+            }
+            else
+            {
+                comboCount = 1; // Сбрасываем комбо
+            }
+
+            // Рассчитываем награду с учётом множителя комбо
+            int amount = Mathf.RoundToInt(baseAmount * Mathf.Pow(comboMultiplier, comboCount - 1));
+            coins += amount;
+            lastEliminationTime = currentTime;
+
+            // Сохраняем монеты и обновляем UI
+            SaveCoinsAsync();
+            UIManager.Instance.UpdateCoins(coins);
+            Debug.Log($"[CurrencyManager] Добавлено {amount} монет (комбо x{comboCount}). Всего: {coins}");
+        }
+
+        // Добавление монет за другие действия (например, задания)
         public void AddCoins(int amount)
         {
             coins += amount;
-            //YandexGamesIntegration.Instance.SavePlayerData("coins", coins);
+            SaveCoinsAsync();
             UIManager.Instance.UpdateCoins(coins);
+            Debug.Log($"[CurrencyManager] Добавлено {amount} монет. Всего: {coins}");
         }
 
-        public void AddPremium(int amount)
-        {
-            premium += amount;
-            //YandexGamesIntegration.Instance.SavePlayerData("premium", premium);
-            UIManager.Instance.UpdatePremium(premium);
-        }
-
+        // Трата монет (например, в магазине)
         public bool SpendCoins(int amount)
         {
             if (coins >= amount)
             {
                 coins -= amount;
-                //YandexGamesIntegration.Instance.SavePlayerData("coins", coins);
+                SaveCoinsAsync();
                 UIManager.Instance.UpdateCoins(coins);
+                Debug.Log($"[CurrencyManager] Потрачено {amount} монет. Остаток: {coins}");
                 return true;
             }
+            Debug.LogWarning($"[CurrencyManager] Недостаточно монет для траты: {amount}, доступно: {coins}");
             return false;
         }
 
-        public bool SpendPremium(int amount)
+        // Асинхронная загрузка монет через Yandex Games SDK
+        private async Task<int> LoadCoinsAsync()
         {
-            if (premium >= amount)
+            try
             {
-                premium -= amount;
-               // YandexGamesIntegration.Instance.SavePlayerData("premium", premium);
-                UIManager.Instance.UpdatePremium(premium);
-                return true;
+                // Используем Yandex Games SDK для загрузки данных
+                //return await YandexGamesIntegration.Instance.LoadPlayerData("coins", 0);
+                return 0; // Заглушка, пока SDK не подключен
             }
-            return false;
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[CurrencyManager] Ошибка загрузки монет: {ex.Message}");
+                return 0; // Возвращаем 0 в случае ошибки
+            }
+        }
+
+        // Асинхронное сохранение монет
+        private async void SaveCoinsAsync()
+        {
+            try
+            {
+                // Используем Yandex Games SDK для сохранения данных
+                //await YandexGamesIntegration.Instance.SavePlayerData("coins", coins);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[CurrencyManager] Ошибка сохранения монет: {ex.Message}");
+            }
         }
 
         public int Coins => coins;
-        public int Premium => premium;
     }
 }

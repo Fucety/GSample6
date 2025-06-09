@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 namespace UshiSoft.UACPF
 {
@@ -10,10 +11,9 @@ namespace UshiSoft.UACPF
 
         [SerializeField] private GameObject countdownPanel; // Панель обратного отсчёта
         [SerializeField] private TextMeshProUGUI countdownText; // Текст отсчёта
-        [SerializeField] private GameObject raceUIPanel; // Панель гонки
-        [SerializeField] private TextMeshProUGUI lapText; // Текст кругов
+        [SerializeField] private GameObject arenaUIPanel; // Панель арены
         [SerializeField] private TextMeshProUGUI coinsText; // Текст монет
-        [SerializeField] private TextMeshProUGUI premiumText; // Текст премиум-валюты
+        [SerializeField] private TextMeshProUGUI eliminationsText; // Текст устранений
         [SerializeField] private GameObject resultsPanel; // Панель результатов
         [SerializeField] private TextMeshProUGUI resultsText; // Текст результатов
         [SerializeField] private GameObject pausePanel; // Панель паузы
@@ -22,6 +22,7 @@ namespace UshiSoft.UACPF
 
         private void Awake()
         {
+            // Singleton: обеспечиваем единственный экземпляр
             if (Instance == null)
             {
                 Instance = this;
@@ -35,9 +36,16 @@ namespace UshiSoft.UACPF
 
         private void Start()
         {
+            // Инициализируем интерфейс арены
             HideAllPanels();
+            arenaUIPanel.SetActive(true);
+            if (coinsText != null)
+                UpdateCoins(0);
+            if (eliminationsText != null)
+                UpdateEliminations(0);
         }
 
+        // Показать обратный отсчёт перед началом матча
         public void ShowCountdown(float duration)
         {
             HideAllPanels();
@@ -45,7 +53,8 @@ namespace UshiSoft.UACPF
             StartCoroutine(UpdateCountdown(duration));
         }
 
-        private System.Collections.IEnumerator UpdateCountdown(float duration)
+        // Обновление обратного отсчёта
+        private IEnumerator UpdateCountdown(float duration)
         {
             float timer = duration;
             while (timer > 0f)
@@ -54,69 +63,120 @@ namespace UshiSoft.UACPF
                 timer -= Time.deltaTime;
                 yield return null;
             }
-            countdownText.text = "GO!";
+            countdownText.text = "СТАРТ!";
             yield return new WaitForSeconds(1f);
             countdownPanel.SetActive(false);
+            ShowArenaUI();
         }
 
-        public void ShowRaceUI()
+        // Показать интерфейс арены
+        public void ShowArenaUI()
         {
             HideAllPanels();
-            raceUIPanel.SetActive(true);
+            if (arenaUIPanel != null)
+                arenaUIPanel.SetActive(true);
         }
 
-        public void ShowRaceResults(int position, int coins, int eliminations)
+        // Показать результаты матча
+        public void ShowMatchResults(int coins, int playerEliminations)
         {
             HideAllPanels();
             resultsPanel.SetActive(true);
-            resultsText.text = $"Position: {position}\nCoins: {coins}\nEliminations: {eliminations}";
+            // Формируем таблицу мест
+            System.Text.StringBuilder leaderboard = new System.Text.StringBuilder();
+            var rankings = GameManager.Instance.GetLeaderboard();
+            for (int i = 0; i < rankings.Count; i++)
+            {
+                var racer = rankings[i];
+                string name = racer.Key.GetComponent<PlayerCarControl>() != null ? "Игрок" : $"Бот {i}";
+                leaderboard.AppendLine($"{i + 1}. {name}: {racer.Value} устранений");
+            }
+            resultsText.text = $"Монеты: {coins}\nВаши устранения: {playerEliminations}\n\nТаблица мест:\n{leaderboard}";
         }
 
+        // Показать панель паузы
         public void ShowPauseMenu()
         {
-            pausePanel.SetActive(true);
+            if (pausePanel != null)
+                pausePanel.SetActive(true);
         }
 
+        // Скрыть панель паузы
         public void HidePauseMenu()
         {
-            pausePanel.SetActive(false);
+            if (pausePanel != null)
+                pausePanel.SetActive(false);
         }
 
-        public void UpdateLap(int currentLap, int totalLaps)
-        {
-            lapText.text = $"Lap {currentLap}/{totalLaps}";
-        }
-
+        // Обновить отображение монет
         public void UpdateCoins(int coins)
         {
-            coinsText.text = $"Coins: {coins}";
+            if (coinsText != null)
+            {
+                coinsText.text = $"{coins}";
+                AdjustFontSize(coinsText, coins.ToString().Length);
+            }
         }
 
-        public void UpdatePremium(int premium)
+        // Обновить отображение устранений
+        public void UpdateEliminations(int eliminations)
         {
-            premiumText.text = $"Premium: {premium}";
+            if (eliminationsText != null)
+            {
+                eliminationsText.text = $"{eliminations}";
+                AdjustFontSize(eliminationsText, eliminations.ToString().Length);
+            }
         }
 
+        // Показать иконку подобранного бонуса
         public void ShowBonusPickup(BonusBase bonus)
         {
-            bonusPickupPanel.SetActive(true);
-            bonusIcon.sprite = bonus.Icon;
-            StartCoroutine(HideBonusPickup());
+            if (bonusPickupPanel != null && bonusIcon != null && bonus.Icon != null)
+            {
+                bonusPickupPanel.SetActive(true);
+                bonusIcon.sprite = bonus.Icon;
+            }
         }
 
-        private System.Collections.IEnumerator HideBonusPickup()
+        // Скрыть иконку бонуса
+        public void HideBonusPickupIcon()
         {
-            yield return new WaitForSeconds(2f);
-            bonusPickupPanel.SetActive(false);
+            if (bonusPickupPanel != null)
+                bonusPickupPanel.SetActive(false);
         }
 
+        // Скрыть все панели
         private void HideAllPanels()
         {
-            countdownPanel.SetActive(false);
-            raceUIPanel.SetActive(false);
-            resultsPanel.SetActive(false);
-            pausePanel.SetActive(false);
-            bonusPickupPanel.SetActive(false);
+            if (countdownPanel != null) countdownPanel.SetActive(false);
+            if (arenaUIPanel != null) arenaUIPanel.SetActive(false);
+            if (resultsPanel != null) resultsPanel.SetActive(false);
+            if (pausePanel != null) pausePanel.SetActive(false);
+            if (bonusPickupPanel != null) bonusPickupPanel.SetActive(false);
+        }
+
+        // Изменён метод AdjustFontSize
+        private void AdjustFontSize(TextMeshProUGUI text, int count)
+        {
+            if (text == null) return;
+            switch (count)
+            {
+                case 1:
+                    text.fontSize = 130f;
+                    break;
+                case 2:
+                    text.fontSize = 115f;
+                    break;
+                case 3:
+                    text.fontSize = 100f;
+                    break;
+                case 4:
+                    text.fontSize = 85f;
+                    break;
+                default:
+                    text.fontSize = 100f;
+                    break;
+            }
         }
     }
 }

@@ -4,38 +4,59 @@ namespace UshiSoft.UACPF
 {
     public class CarHealth : MonoBehaviour
     {
-        [SerializeField] private float maxHealth = 100f; // Максимальное здоровье
+        [SerializeField] private float maxHealth = 100f;
         private float currentHealth;
-        private bool isShielded; // Активен ли щит
-        private float shieldTimer; // Таймер щита
-        private int eliminations; // Количество устранённых противников
+        private bool isShielded;
+        private float shieldTimer;
+        private int eliminations;
+        private bool isDead = false;
+        private CarControllerBase lastAttacker;
+
+        [SerializeField] private GameObject deathParticlePrefab;
 
         private void Start()
         {
             currentHealth = maxHealth;
-            eliminations = 0;
         }
 
         private void Update()
         {
             if (isShielded)
             {
-                shieldTimer -= Time.deltaTime;
-                if (shieldTimer <= 0f)
+                if ((shieldTimer -= Time.deltaTime) <= 0f)
                     isShielded = false;
             }
         }
 
-        public void TakeDamage(float damage)
+        public void TakeDamage(float damage, CarControllerBase attacker = null)
         {
-            if (isShielded) return;
-
+            if (isShielded || isDead) return;
+            lastAttacker = attacker;
             currentHealth -= damage;
-            if (currentHealth <= 0f)
+            if (currentHealth <= 0f && !isDead)
             {
-                GameManager.Instance.RegisterElimination(GetComponent<CarControllerBase>());
-                gameObject.SetActive(false); // Уничтожение машины
+                Die();
             }
+        }
+
+        private void Die()
+        {
+            if (isDead) return;
+            isDead = true;
+            Debug.Log($"[{gameObject.name}] Уничтожен.");
+            if(deathParticlePrefab != null)
+            {
+                Instantiate(deathParticlePrefab, transform.position, Quaternion.identity);
+            }
+            if (GameManager.Instance != null)
+            {
+                var carController = GetComponent<CarControllerBase>();
+                if (carController != null)
+                {
+                    GameManager.Instance.RegisterElimination(carController);
+                }
+            }
+            gameObject.SetActive(false);
         }
 
         public void ActivateShield(float duration)
@@ -44,22 +65,46 @@ namespace UshiSoft.UACPF
             shieldTimer = duration;
         }
 
-        // Респавн машины
+        // Обновленный метод респавна
         public void Respawn()
         {
             currentHealth = maxHealth;
+            isDead = false;
+            lastAttacker = null;
             gameObject.SetActive(true);
-            ActivateShield(3f); // 3 секунды неуязвимости после респавна
-            GetComponent<CheckpointTrigger>().Respawn();
+
+            // 1. Перемещаем машину на точку спавна
+            var checkpointTrigger = GetComponent<CheckpointTrigger>();
+            if (checkpointTrigger != null)
+            {
+                checkpointTrigger.Respawn();
+            }
+            else
+            {
+                Debug.LogWarning($"[{gameObject.name}] CheckpointTrigger не найден при респавне!");
+            }
+
+            // 2. Если это бот, сбрасываем его AI
+            var botControl = GetComponent<BotCarControl>();
+            if (botControl != null)
+            {
+                botControl.Respawn();
+            }
+
+            // 3. Активируем щит неуязвимости
+            ActivateShield(3f);
         }
 
-        // Инкремент устранений
         public void AddElimination()
         {
             eliminations++;
+            if (GetComponent<PlayerCarControl>() != null)
+                UIManager.Instance.UpdateEliminations(eliminations);
         }
 
-        // Свойство для доступа к количеству устранений
         public int Eliminations => eliminations;
+        public float CurrentHealth => currentHealth;
+        public float MaxHealth => maxHealth;
+        public CarControllerBase LastAttacker => lastAttacker;
     }
 }

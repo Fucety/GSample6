@@ -14,5 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   commonBonuses:
   - {fileID: 11400000, guid: 0f8a015268ef5934a973de9beed07346, type: 2}
-  rareBonuses: []
-  epicBonuses: []
+  - {fileID: 11400000, guid: 7dece7c9559b8734587d446f05fa4cdc, type: 2}
+  rareBonuses:
+  - {fileID: 11400000, guid: 0f8a015268ef5934a973de9beed07346, type: 2}
+  - {fileID: 11400000, guid: 7dece7c9559b8734587d446f05fa4cdc, type: 2}
+  epicBonuses:
+  - {fileID: 11400000, guid: 0f8a015268ef5934a973de9beed07346, type: 2}
+  - {fileID: 11400000, guid: 7dece7c9559b8734587d446f05fa4cdc, type: 2}

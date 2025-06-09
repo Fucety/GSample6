@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,30 +7,31 @@ namespace UshiSoft.UACPF
 {
     public enum GameState
     {
-        Waiting, // Ожидание старта
-        Racing,  // Гонка
-        Paused,  // Пауза
-        Finished // Финиш
+        Waiting,
+        Fighting,
+        Paused,
+        Finished
     }
 
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
 
-        [SerializeField] private float startDelay = 3f; // Задержка перед стартом (сек)
-        [SerializeField] private List<CarControllerBase> racers; // Все участники гонки
-        [SerializeField] private float raceDuration = 180f; // Длительность заезда (сек)
+        [SerializeField] private float startDelay = 3f;
+        [SerializeField] private List<CarControllerBase> racers;
+        [SerializeField] private float matchDuration = 180f;
+        [SerializeField] private float respawnDelay = 3f;
 
-        private GameState state = GameState.Waiting; // Текущее состояние
-        private float startTimer; // Таймер старта
-        private float raceTimer; // Таймер гонки
-        private int playerCoins; // Монеты игрока
-        private int playerEliminations; // Количество устранённых соперников
-        private CarControllerBase playerCar; // Машина игрока
+        private GameState state = GameState.Waiting;
+        private float startTimer;
+        private float matchTimer;
+        private int playerCoins;
+        private int playerEliminations;
+        private CarControllerBase playerCar;
+        private Dictionary<CarControllerBase, int> racerEliminations;
 
         private void Awake()
         {
-            // Singleton
             if (Instance == null)
             {
                 Instance = this;
@@ -41,111 +43,118 @@ namespace UshiSoft.UACPF
                 return;
             }
 
-            // Находим машину игрока
             playerCar = racers.Find(r => r.GetComponent<PlayerCarControl>() != null);
-            Debug.Log("GameManager Awake: " + gameObject.name); // Отладка
+            if (playerCar == null)
+            {
+                Debug.LogError("GameManager: Машина игрока не найдена в списке racers!");
+            }
+
+            racerEliminations = new Dictionary<CarControllerBase, int>();
+            foreach (var racer in racers)
+            {
+                racerEliminations[racer] = 0;
+            }
         }
 
         private void Start()
         {
             startTimer = startDelay;
-            raceTimer = raceDuration;
-            GameEvents.OnCountdownStarted.Invoke(startDelay); // Запускаем обратный отсчёт
+            matchTimer = matchDuration;
+            GameEvents.OnCountdownStarted.Invoke(startDelay);
         }
 
         private void Update()
         {
             if (state == GameState.Waiting)
             {
-                startTimer -= Time.deltaTime;
-                if (startTimer <= 0f)
+                if ((startTimer -= Time.deltaTime) <= 0f)
                 {
-                    StartRace();
+                    StartMatch();
                 }
             }
-            else if (state == GameState.Racing)
+            else if (state == GameState.Fighting)
             {
-                raceTimer -= Time.deltaTime;
-                if (raceTimer <= 0f)
+                if ((matchTimer -= Time.deltaTime) <= 0f)
                 {
-                    FinishRace();
+                    FinishMatch();
                 }
             }
         }
 
-        // Запуск гонки
-        private void StartRace()
+        private void StartMatch()
         {
-            state = GameState.Racing;
+            state = GameState.Fighting;
             foreach (var racer in racers)
             {
-                racer.enabled = true; // Включаем управление
-                racer.GetComponent<CheckpointTrigger>().Respawn(); // Спавн всех машин
+                racer.enabled = true;
+                var checkpointTrigger = racer.GetComponent<CheckpointTrigger>();
+                if (checkpointTrigger != null)
+                {
+                    checkpointTrigger.Respawn();
+                }
             }
-            Debug.Log("StartRace: гонка началась. Вызывается OnRaceStarted.");
-            GameEvents.OnRaceStarted.Invoke();
+            GameEvents.OnMatchStarted.Invoke();
         }
 
-        // Завершение гонки
-        public void FinishRace()
+        public void FinishMatch()
         {
-            if (state != GameState.Racing) return;
-
+            if (state != GameState.Fighting) return;
             state = GameState.Finished;
             foreach (var racer in racers)
             {
-                racer.enabled = false; // Отключаем управление
+                racer.enabled = false;
             }
-
-            // Определяем позицию игрока (по количеству устранений)
-            int playerPosition = CalculatePlayerPosition();
-            int placeCoins = playerPosition switch
-            {
-                1 => 300, // 1-е место
-                2 => 200, // 2-е место
-                3 => 100, // 3-е место
-                _ => 0
-            };
-            AddCoins(placeCoins + playerEliminations * 50); // Награда за место и устранения
-            GameEvents.OnRaceFinished.Invoke(playerPosition, playerCoins, playerEliminations);
+            // В `playerEliminations` уже хранятся итоговые устранения игрока
+            GameEvents.OnMatchFinished.Invoke(playerCoins, playerEliminations);
         }
 
-        // Расчёт позиции игрока по количеству устранений
-        private int CalculatePlayerPosition()
-        {
-            var sortedRacers = racers.OrderByDescending(r => r.GetComponent<CarHealth>().Eliminations).ToList();
-            return sortedRacers.IndexOf(playerCar) + 1;
-        }
-
-        // Добавление монет
-        public void AddCoins(int amount)
-        {
-            playerCoins += amount;
-            GameEvents.OnCoinsAdded.Invoke(amount);
-        }
-
-        // Регистрация устранения
         public void RegisterElimination(CarControllerBase eliminatedCar)
         {
-            if (state != GameState.Racing) return;
+            if (state != GameState.Fighting || eliminatedCar == null) return;
 
-            // Если игрок жив, добавляем ему устранение
-            if (playerCar != null && playerCar.gameObject.activeInHierarchy)
+            var killer = eliminatedCar.GetComponent<CarHealth>()?.LastAttacker;
+            if (killer != null)
             {
-                playerEliminations++;
-                playerCar.GetComponent<CarHealth>().AddElimination();
-                AddCoins(50); // Награда за устранение
+                // Проверяем, есть ли у убийцы компонент CarHealth
+                var attackerHealth = killer.GetComponent<CarHealth>();
+                if (attackerHealth != null)
+                {
+                    attackerHealth.AddElimination();
+                    // Обновляем статистику в словаре
+                    if (racerEliminations.ContainsKey(killer))
+                    {
+                        racerEliminations[killer] = attackerHealth.Eliminations;
+                    }
+                }
+                
+                // Если убийца - игрок, обновляем его личный счетчик и начисляем монеты
+                if (killer == playerCar)
+                {
+                    playerEliminations++;
+                    CurrencyManager.Instance.AddCoinsForElimination(50);
+                    GameEvents.OnEliminationsUpdated.Invoke(playerEliminations);
+                }
             }
 
             GameEvents.OnElimination.Invoke(eliminatedCar);
-            // Ресспавн устранённой машины
-            eliminatedCar.GetComponent<CarHealth>().Respawn();
+            
+            StartCoroutine(RespawnCarCoroutine(eliminatedCar));
         }
 
-        // Пауза/возобновление
+        private IEnumerator RespawnCarCoroutine(CarControllerBase car)
+        {
+            if (car == null) yield break;
+            yield return new WaitForSeconds(respawnDelay);
+            var carHealth = car.GetComponent<CarHealth>();
+            if (carHealth != null)
+            {
+                carHealth.Respawn();
+            }
+        }
+        
         public void TogglePause()
         {
-            if (state == GameState.Racing)
+            if (state == GameState.Fighting)
             {
                 state = GameState.Paused;
                 Time.timeScale = 0f;
@@ -153,7 +162,7 @@ namespace UshiSoft.UACPF
             }
             else if (state == GameState.Paused)
             {
-                state = GameState.Racing;
+                state = GameState.Fighting;
                 Time.timeScale = 1f;
                 GameEvents.OnPauseToggled.Invoke(false);
             }
@@ -161,5 +170,15 @@ namespace UshiSoft.UACPF
 
         public GameState State => state;
         public CarControllerBase PlayerCar => playerCar;
+
+        /// <summary>
+        /// Возвращает отсортированный список участников по количеству устранений.
+        /// </summary>
+        /// <returns>Список пар (Участник, Устранения) от лучшего к худшему.</returns>
+        public List<KeyValuePair<CarControllerBase, int>> GetLeaderboard()
+        {
+            // Сортируем словарь со статистикой по убыванию очков и возвращаем как список
+            return racerEliminations.OrderByDescending(kvp => kvp.Value).ToList();
+        }
     }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   skins:
   - spriteName: gay1
     price: 1
-    modelPrefab: {fileID: 7529916052903274255, guid: 85376ff9a518a5a40b52fcb505058581, type: 3}
+    modelPrefab: {fileID: 6032882816936506424, guid: d4c60b41f1f1be449b927564b7c43780, type: 3}
   - spriteName: gay2
     price: 2
     modelPrefab: {fileID: 5787907223939371559, guid: 9d1170c1dc2a0ad408b3c15b4174a2fc, type: 3}

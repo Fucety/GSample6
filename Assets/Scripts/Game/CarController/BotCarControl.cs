@@ -6,6 +6,8 @@ namespace UshiSoft.UACPF
 {
     public class BotCarControl : DriverBase
     {
+        #region Поля
+
         private enum BotState
         {
             SeekPoint,  // Движение к контрольной точке
@@ -53,6 +55,11 @@ namespace UshiSoft.UACPF
         private bool isReversing;
         private BonusHandler bonusHandler;
 
+        #endregion
+
+        #region Жизненный цикл
+
+        /// Инициализация компонента при запуске.
         protected override void Awake()
         {
             base.Awake();
@@ -63,6 +70,21 @@ namespace UshiSoft.UACPF
             RespawnAndSetInitialTarget();
         }
 
+        /// <summary>
+        /// Сбрасывает состояние AI, вызывается после респавна.
+        /// </summary>
+        public void Respawn()
+        {
+            // Этот метод сбрасывает навигацию и ищет новую цель,
+            // что и нужно после телепортации на спавнпоинт.
+            RespawnAndSetInitialTarget();
+        }
+
+        #endregion
+
+        #region Навигация
+
+        /// Инициализирует настройки NavMeshAgent.
         private void InitializeNavMeshAgent()
         {
             if (navMeshAgent == null) navMeshAgent = GetComponent<NavMeshAgent>();
@@ -78,6 +100,7 @@ namespace UshiSoft.UACPF
             navMeshAgent.autoRepath = false;
         }
 
+        /// Перенаправляет автомобиль и задаёт первоначальную цель.
         private void RespawnAndSetInitialTarget()
         {
             if (navMeshAgent != null && navMeshAgent.isOnNavMesh) navMeshAgent.Warp(transform.position);
@@ -86,9 +109,66 @@ namespace UshiSoft.UACPF
             RecalculatePathToTarget();
         }
 
+        /// Пересчитывает путь к текущей цели.
+        private void RecalculatePathToTarget()
+        {
+            if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
+            if (!navMeshAgent.isOnNavMesh) { if (!TryWarpToNavMesh()) return; }
+
+            if (!navMeshAgent.SetDestination(targetPosition))
+            {
+                targetPosition = GetRandomPoint();
+                navMeshAgent.SetDestination(targetPosition);
+            }
+        }
+
+        /// Пытается переместить автомобиль на NavMesh, если он вне ее.
+        private bool TryWarpToNavMesh()
+        {
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                navMeshAgent.Warp(hit.position);
+                if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
+                return true;
+            }
+            return false;
+        }
+
+        /// Получает случайную точку на NavMesh для задания цели.
+        private Vector3 GetRandomPoint()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Vector3 randomDir = transform.position + Random.insideUnitSphere * pointSearchRadius;
+                if (NavMesh.SamplePosition(randomDir, out NavMeshHit hit, pointSearchRadius, NavMesh.AllAreas) &&
+                    Vector3.Distance(hit.position, transform.position) > targetReachDistance)
+                {
+                    return hit.position;
+                }
+            }
+            if (NavMesh.SamplePosition(transform.position + transform.forward * 10f, out NavMeshHit fwdHit, 10f, NavMesh.AllAreas))
+                return fwdHit.position;
+            return transform.position;
+        }
+
+        /// Проверяет, является ли указанная точка корректной для перемещения.
+        private bool IsTargetValid(Vector3 position)
+        {
+            if (Vector3.Distance(transform.position, position) < targetReachDistance * 0.5f) return false;
+            if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
+            bool isValid = navMeshAgent.CalculatePath(position, new NavMeshPath());
+            return isValid;
+        }
+
+        #endregion
+
+        #region Движение
+
+        /// Основной метод управления движением автомобиля.
         protected override void Drive()
         {
-            if (GameManager.Instance.State != GameState.Racing || navMeshAgent == null) return;
+            if (GameManager.Instance.State != GameState.Fighting || navMeshAgent == null) return;
 
             if (startTimer > 0f)
             {
@@ -121,6 +201,7 @@ namespace UshiSoft.UACPF
             ApplyCarInputs();
         }
 
+        /// Обновляет состояние и цель в зависимости от условий игры.
         private void UpdateStateAndTarget()
         {
             pathUpdateTimerInternal -= Time.deltaTime;
@@ -160,6 +241,7 @@ namespace UshiSoft.UACPF
             }
         }
 
+        /// Устанавливает новую цель и обновляет состояние движения.
         private void SetNewTarget(Vector3 newPos, BotState newState)
         {
             targetPosition = newPos;
@@ -170,6 +252,30 @@ namespace UshiSoft.UACPF
             }
         }
 
+        /// Осуществляет движение к текущей цели.
+        private void MoveToCurrentTarget()
+        {
+            if (Vector3.Distance(transform.position, targetPosition) < targetReachDistance)
+            {
+                if (currentState == BotState.SeekRival && bonusHandler != null && bonusHandler.HasBonus)
+                {
+                    UseBonus(true);
+                }
+                pathUpdateTimerInternal = -1f;
+                return;
+            }
+
+            if (navMeshAgent.enabled && (!navMeshAgent.hasPath || navMeshAgent.isPathStale || Vector3.Distance(navMeshAgent.destination, targetPosition) > 0.5f))
+            {
+                RecalculatePathToTarget();
+            }
+        }
+
+        #endregion
+
+        #region Избегание
+
+        /// Проверяет наличие препятствий для немедленного избегания столкновений.
         private bool CheckForImmediateObstacles()
         {
             Vector3[] rayDirs = {
@@ -193,24 +299,7 @@ namespace UshiSoft.UACPF
             return false;
         }
 
-        private void MoveToCurrentTarget()
-        {
-            if (Vector3.Distance(transform.position, targetPosition) < targetReachDistance)
-            {
-                if (currentState == BotState.SeekRival && bonusHandler != null && bonusHandler.HasBonus)
-                {
-                    UseBonus(true);
-                }
-                pathUpdateTimerInternal = -1f;
-                return;
-            }
-
-            if (navMeshAgent.enabled && (!navMeshAgent.hasPath || navMeshAgent.isPathStale || Vector3.Distance(navMeshAgent.destination, targetPosition) > 0.5f))
-            {
-                RecalculatePathToTarget();
-            }
-        }
-
+        /// Обновляет маневры для обхода препятствий.
         private void UpdateAvoid()
         {
             avoidTimer -= Time.deltaTime;
@@ -251,6 +340,11 @@ namespace UshiSoft.UACPF
             _carController.Reverse = isReversing;
         }
 
+        #endregion
+
+        #region Ввод и столкновения
+
+        /// Применяет входные данные для управления автомобилем.
         private void ApplyCarInputs()
         {
             if (currentState == BotState.Avoid) return;
@@ -295,6 +389,7 @@ namespace UshiSoft.UACPF
             }
         }
 
+        /// Обрабатывает столкновения и включает режим избегания.
         private void OnCollisionEnter(Collision collision)
         {
             if (currentState == BotState.Avoid && avoidTimer > reverseTimeOnCollision * 0.5f) return;
@@ -317,63 +412,7 @@ namespace UshiSoft.UACPF
             }
         }
 
-        private Collider FindNearestCollider(LayerMask layer, float radius, GameObject selfToIgnore = null)
-        {
-            return Physics.OverlapSphere(transform.position, radius, layer)
-                .Where(c => (selfToIgnore == null || c.gameObject != selfToIgnore) && 
-                            !Physics.Linecast(transform.position + transform.up * 0.5f, c.bounds.center, obstacleLayer))
-                .OrderBy(c => Vector3.Distance(transform.position, c.transform.position))
-                .FirstOrDefault();
-        }
-
-        private Vector3 GetRandomPoint()
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                Vector3 randomDir = transform.position + Random.insideUnitSphere * pointSearchRadius;
-                if (NavMesh.SamplePosition(randomDir, out NavMeshHit hit, pointSearchRadius, NavMesh.AllAreas) &&
-                    Vector3.Distance(hit.position, transform.position) > targetReachDistance)
-                {
-                    return hit.position;
-                }
-            }
-            if (NavMesh.SamplePosition(transform.position + transform.forward * 10f, out NavMeshHit fwdHit, 10f, NavMesh.AllAreas))
-                return fwdHit.position;
-            return transform.position;
-        }
-
-        private bool IsTargetValid(Vector3 position)
-        {
-            if (Vector3.Distance(transform.position, position) < targetReachDistance * 0.5f) return false;
-            if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
-            bool isValid = navMeshAgent.CalculatePath(position, new NavMeshPath());
-            return isValid;
-        }
-
-        private void RecalculatePathToTarget()
-        {
-            if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
-            if (!navMeshAgent.isOnNavMesh) { if (!TryWarpToNavMesh()) return; }
-
-            if (!navMeshAgent.SetDestination(targetPosition))
-            {
-                targetPosition = GetRandomPoint();
-                navMeshAgent.SetDestination(targetPosition);
-            }
-        }
-
-        private bool TryWarpToNavMesh()
-        {
-            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-            {
-                transform.position = hit.position;
-                navMeshAgent.Warp(hit.position);
-                if (!navMeshAgent.enabled) navMeshAgent.enabled = true;
-                return true;
-            }
-            return false;
-        }
-
+        /// Использует бонус, если он доступен.
         private void UseBonus(bool forceUse)
         {
             if (bonusHandler != null && bonusHandler.HasBonus && forceUse)
@@ -383,7 +422,26 @@ namespace UshiSoft.UACPF
             }
         }
 
+        #endregion
+
+        #region Вспомогательные
+
+        /// Ищет ближайший коллайдер в заданном радиусе и слое.
+        private Collider FindNearestCollider(LayerMask layer, float radius, GameObject selfToIgnore = null)
+        {
+            return Physics.OverlapSphere(transform.position, radius, layer)
+                .Where(c => (selfToIgnore == null || c.gameObject != selfToIgnore) && 
+                            !Physics.Linecast(transform.position + transform.up * 0.5f, c.bounds.center, obstacleLayer))
+                .OrderBy(c => Vector3.Distance(transform.position, c.transform.position))
+                .FirstOrDefault();
+        }
+
+        #endregion
+
 #if UNITY_EDITOR
+        #region Отладка
+
+        /// Рисует Gizmos для отладки в редакторе.
         private void OnDrawGizmosSelected()
         {
             if (showTargetGizmo && targetPosition != Vector3.zero)
@@ -414,6 +472,8 @@ namespace UshiSoft.UACPF
                 }
             }
         }
+
+        #endregion
 #endif
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UshiSoft.Common;
 
 namespace UshiSoft.UACPF
@@ -444,6 +445,44 @@ namespace UshiSoft.UACPF
             _rigidbody.AddForce(force);
 
             _totalForce += force;
+        }
+
+        // Новые публичные методы с поддержкой reverseDuration:
+        public void ApplyBoost(float force, float duration, float rampTime, float reverseDuration)
+        {
+            StartCoroutine(BoostCoroutine(force, duration, rampTime, reverseDuration));
+        }
+
+        private IEnumerator BoostCoroutine(float force, float duration, float rampTime, float reverseDuration)
+        {
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                float multiplier = 1f;
+                if (elapsed < rampTime)
+                {
+                    // Фаза ускорения: линейное увеличение
+                    multiplier = Mathf.Lerp(0f, 1f, elapsed / rampTime);
+                }
+                else if (elapsed > duration - rampTime)
+                {
+                    // Фаза замедления: экспоненциальное затухание, зависящее от силы буста
+                    float x = (elapsed - (duration - rampTime)) / rampTime;
+                    multiplier = Mathf.Exp(- (force / 100f) * x);
+                }
+                _rigidbody.AddForce(transform.forward * force * multiplier, ForceMode.Acceleration);
+                yield return new WaitForFixedUpdate();
+                elapsed += Time.fixedDeltaTime;
+            }
+            // Фаза обратного замедления: сила в противоположном направлении на короткое время
+            float reverseElapsed = 0f;
+            while (reverseElapsed < reverseDuration)
+            {
+                float reverseMultiplier = Mathf.Lerp(-1f, 0f, reverseElapsed / reverseDuration);
+                _rigidbody.AddForce(transform.forward * force * reverseMultiplier, ForceMode.Acceleration);
+                yield return new WaitForFixedUpdate();
+                reverseElapsed += Time.fixedDeltaTime;
+            }
         }
     }
 }

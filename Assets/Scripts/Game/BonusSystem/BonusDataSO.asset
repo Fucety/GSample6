@@ -16,8 +16,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0f8a015268ef5934a973de9beed07346, type: 2}
   - {fileID: 11400000, guid: 7dece7c9559b8734587d446f05fa4cdc, type: 2}
   rareBonuses:
-  - {fileID: 11400000, guid: 0f8a015268ef5934a973de9beed07346, type: 2}
-  - {fileID: 11400000, guid: 7dece7c9559b8734587d446f05fa4cdc, type: 2}
+  - {fileID: 11400000, guid: 02c58807d4659664b8ef7947d0e30c51, type: 2}
+  - {fileID: 11400000, guid: 04e6994c9f05bd5419607a23977a3ed9, type: 2}
   epicBonuses:
-  - {fileID: 11400000, guid: 0f8a015268ef5934a973de9beed07346, type: 2}
-  - {fileID: 11400000, guid: 7dece7c9559b8734587d446f05fa4cdc, type: 2}
+  - {fileID: 11400000, guid: 0f899de44e315cd40b429f426fcdff44, type: 2}
+  - {fileID: 11400000, guid: 1ef442b062cc6e24aaa5e99275cb78cf, type: 2}

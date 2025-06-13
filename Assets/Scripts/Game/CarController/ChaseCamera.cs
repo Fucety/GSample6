@@ -30,7 +30,26 @@ namespace UshiSoft.UACPF
             get => _followVelocity;
             set => _followVelocity = value;
         }
+        
+        private void OnEnable()
+        {
+            // Подписываемся на событие спавна игрока
+            GameEvents.OnPlayerSpawned.AddListener(SetTargetCar);
+        }
 
+        private void OnDisable()
+        {
+            // Отписываемся, чтобы избежать ошибок при смене сцены
+            GameEvents.OnPlayerSpawned.RemoveListener(SetTargetCar);
+        }
+
+        // Этот метод будет вызван автоматически, когда GameEvents.OnPlayerSpawned.Invoke сработает
+        private void SetTargetCar(CarControllerBase playerCar)
+        {
+            Debug.Log($"[ChaseCamera] Цель получена: {playerCar.name}");
+            _targetCar = playerCar;
+        }
+    
         private void LateUpdate()
         {
             if (_targetCar == null)

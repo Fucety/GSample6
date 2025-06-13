@@ -26,55 +26,73 @@ public class ShopManager : MonoBehaviour
             cellsPerGrid = 9,
             animationDuration = animationDuration,
             animationDelay = animationDelay,
-            configureCell = (button, skin) =>
-            {
-                if (string.IsNullOrEmpty(skin.spriteName)) return;
-
-                Sprite skinSprite = spriteAtlas.GetSprite(skin.spriteName);
-                if (skinSprite != null)
-                {
-                    if (button.transform.Find("IconMask/Icon").TryGetComponent<Image>(out var childImage))
-                    {
-                        childImage.sprite = skinSprite;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Компонент Image не найден по пути IconMask/Icon.");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"Спрайт с именем {skin.spriteName} не найден в атласе.");
-                }
-
-                if (button.transform.Find("PriceBack/Price").TryGetComponent<TextMeshProUGUI>(out var priceText))
-                {
-                    priceText.text = $"{skin.price} $";
-                }
-                else
-                {
-                    Debug.LogWarning($"Компонент TextMeshProUGUI не найден по пути PriceBack/Price.");
-                }
-
-                int price = skin.price;
-                button.GetComponent<Button>().onClick.RemoveAllListeners();
-                button.GetComponent<Button>().onClick.AddListener(() => OnSkinSelected(skin.spriteName, price));
-            }
+            configureCell = ConfigureSkinCell
         };
-
         panelManager = new PanelManager<SkinData>(config);
     }
 
-    private void OnSkinSelected(string spriteName, int price)
+    private void ConfigureSkinCell(GameObject button, SkinData skin)
     {
-        MenuActions.SelectSkin(spriteName);
-        SkinLoader skinLoader = new(panelData);
-        SkinData selectedSkin = skinLoader.ApplySkin(spriteName);
-        if (selectedSkin != null)
+        if (string.IsNullOrEmpty(skin.spriteName)) return;
+
+        Sprite skinSprite = spriteAtlas.GetSprite(skin.spriteName);
+        if (skinSprite != null)
         {
-            Debug.Log($"Выбран скин: {selectedSkin.spriteName}, Цена: {selectedSkin.price}$");
+            if (button.transform.Find("IconMask/Icon").TryGetComponent<Image>(out var childImage))
+            {
+                childImage.sprite = skinSprite;
+            }
         }
-       
+
+        if (button.transform.Find("PriceBack/Price").TryGetComponent<TextMeshProUGUI>(out var priceText))
+        {
+            priceText.text = $"{skin.price}";
+        }
+
+        var priceBack = button.transform.Find("PriceBack").gameObject;
+        bool isUnlocked = PlayerDataManager.Instance.IsSkinUnlocked(skin.spriteName);
+        bool isEquipped = PlayerDataManager.Instance.GetEquippedSkin() == skin.spriteName;
+
+        var buttonComponent = button.GetComponent<Button>();
+        buttonComponent.onClick.RemoveAllListeners();
+
+        if (isEquipped)
+        {
+            priceBack.SetActive(false);
+            buttonComponent.interactable = false;
+        }
+        else if (isUnlocked)
+        {
+            priceBack.SetActive(false);
+            buttonComponent.interactable = true;
+            buttonComponent.onClick.AddListener(() => EquipSkin(skin.spriteName));
+        }
+        else
+        {
+            priceBack.SetActive(true);
+            buttonComponent.interactable = true;
+            buttonComponent.onClick.AddListener(() => TryBuySkin(skin));
+        }
+    }
+
+    private void TryBuySkin(SkinData skin)
+    {
+        if (PlayerDataManager.Instance.TrySpendCoins(skin.price))
+        {
+            PlayerDataManager.Instance.UnlockSkin(skin.spriteName);
+            EquipSkin(skin.spriteName);
+        }
+        else
+        {
+            Debug.LogWarning("Недостаточно монет для покупки!");
+            // Здесь можно добавить визуальный фидбек
+        }
+    }
+
+    private void EquipSkin(string spriteName)
+    {
+        PlayerDataManager.Instance.EquipSkin(spriteName);
+        panelManager.RefreshCurrentPage();
     }
 
     public void MoveRight()

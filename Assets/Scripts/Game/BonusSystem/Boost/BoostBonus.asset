@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c275c6e071851214bb85d12e88346e40, type: 3}
+  m_Name: BoostBonus
+  m_EditorClassIdentifier: 
+  bonusName: Boost
+  icon: {fileID: 21300000, guid: d9df7fd12a0674f4f80b6b466208935a, type: 3}
+  rarity: 1
+  boostForce: 25
+  duration: 0.8
+  boostRampTime: 0.01
+  reversePhaseDuration: 1
+  specialShieldEffectPrefab: {fileID: 335064352272160983, guid: 661f477a221b7544da17e59afe1de4e7, type: 3}
+  specialShieldTotalTouchDamage: 100
+  specialDamageTickRate: 0.85
+  shieldGrantsImmunity: 0

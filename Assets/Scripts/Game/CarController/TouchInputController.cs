@@ -18,6 +18,27 @@ namespace UshiSoft.UACPF
         private float lastTapTime; // Время последнего касания для кнопки
         private int tapCount; // Счётчик касаний
 
+        // Правильная реализация синглтона:
+        public static TouchInputController Instance { get; private set; } // Изменено с IInputProvider на TouchInputController для удобства в Awake
+
+        private void Awake()
+        {
+            // Проверяем, существует ли уже экземпляр
+            if (Instance != null && Instance != this)
+            {
+                // Если да, уничтожаем этот новый объект, чтобы сохранить единственный экземпляр
+                Debug.LogWarning("Обнаружено несколько экземпляров TouchInputController. Удаляем дубликат.");
+                Destroy(gameObject);
+            }
+            else
+            {
+                // Если нет, устанавливаем этот объект как единственный экземпляр
+                Instance = this;
+                // Не добавляйте DontDestroyOnLoad, если контроллер специфичен для сцены
+                // DontDestroyOnLoad(gameObject);
+            }
+        }
+
         private void Update()
         {
             HandleTouchInput();

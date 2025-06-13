@@ -5,14 +5,14 @@ using DG.Tweening;
 [System.Serializable]
 public class PanelGridConfig<ItemData>
 {
-    public GameObject buttonPrefab;           // Префаб кнопки для ячейки
-    public GameObject panelPrefab;            // Префаб панели
-    public Transform parentPanel;             // Родительская панель для размещения
-    public ItemData[] items;                 // Массив данных для ячеек
-    public int cellsPerGrid = 9;             // Количество ячеек на панель
-    public float animationDuration = 0.3f;   // Длительность анимации ячейки
-    public float animationDelay = 0.05f;     // Задержка между анимациями ячеек
-    public System.Action<GameObject, ItemData> configureCell; // Делегат для настройки ячейки
+    public GameObject buttonPrefab;
+    public GameObject panelPrefab;
+    public Transform parentPanel;
+    public ItemData[] items;
+    public int cellsPerGrid = 9;
+    public float animationDuration = 0.3f;
+    public float animationDelay = 0.05f;
+    public System.Action<GameObject, ItemData> configureCell;
 }
 
 public class PanelManager<ItemData>
@@ -20,7 +20,6 @@ public class PanelManager<ItemData>
     private readonly PanelGridConfig<ItemData> config;
     private GameObject panel;
     private GameObject[] cellButtons;
-    // Добавляем массив для хранения tween-ов для каждой ячейки
     private DG.Tweening.Core.TweenerCore<Vector3, Vector3, DG.Tweening.Plugins.Options.VectorOptions>[] cellTweeners;
     private int currentPage = 0;
     private int totalPages;
@@ -46,7 +45,7 @@ public class PanelManager<ItemData>
         totalPages = Mathf.CeilToInt((float)config.items.Length / config.cellsPerGrid);
         CreatePanel();
         CreateCells();
-        UpdateCells(0); // Отображаем первую страницу
+        UpdateCells(0);
     }
 
     private void CreatePanel()
@@ -58,12 +57,11 @@ public class PanelManager<ItemData>
     private void CreateCells()
     {
         cellButtons = new GameObject[config.cellsPerGrid];
-        // Инициализируем массив для tween-ов
         cellTweeners = new DG.Tweening.Core.TweenerCore<Vector3, Vector3, DG.Tweening.Plugins.Options.VectorOptions>[config.cellsPerGrid];
         for (int i = 0; i < config.cellsPerGrid; i++)
         {
             cellButtons[i] = Object.Instantiate(config.buttonPrefab, panel.transform);
-            cellButtons[i].SetActive(false); // Изначально ячейки скрыты
+            cellButtons[i].SetActive(false);
         }
     }
 
@@ -78,15 +76,12 @@ public class PanelManager<ItemData>
             if (itemIndex < config.items.Length && config.items[itemIndex] != null)
             {
                 cell.SetActive(true);
-                // Сбрасываем масштаб для анимации
                 cell.transform.localScale = Vector3.zero;
-                // Если для ячейки уже есть активный твин, завершаем его
                 if (cellTweeners[i] != null && cellTweeners[i].active)
                 {
                     cellTweeners[i].Kill();
                 }
                 config.configureCell?.Invoke(cell, config.items[itemIndex]);
-                // Запоминаем новый твин для ячейки
                 cellTweeners[i] = cell.transform.DOScale(Vector3.one, config.animationDuration)
                     .SetDelay(i * config.animationDelay)
                     .SetEase(Ease.OutBack);
@@ -96,6 +91,12 @@ public class PanelManager<ItemData>
                 cell.SetActive(false);
             }
         }
+    }
+    
+    // Новый метод для принудительного обновления текущей страницы
+    public void RefreshCurrentPage()
+    {
+        UpdateCells(currentPage);
     }
 
     public void MoveRight()

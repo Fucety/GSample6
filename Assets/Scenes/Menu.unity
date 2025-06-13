@@ -238,6 +238,50 @@ MonoBehaviour:
   - Language: Turkish
     Text: "M\xFCzik hacmi:"
     Object: {fileID: 0}
+--- !u!1 &18443898
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 18443900}
+  - component: {fileID: 18443901}
+  m_Layer: 0
+  m_Name: PlayerDataManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &18443900
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18443898}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.8, y: 0.39183432, z: -12.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &18443901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 18443898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb224b62b486f34a9f59593dea844bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &57086971
 GameObject:
   m_ObjectHideFlags: 0
@@ -2280,7 +2324,7 @@ MonoBehaviour:
   portraitScale: {x: 1, y: 1, z: 1}
   landscapeScale: {x: 1.5, y: 1.5, z: 1}
   pcScale: {x: 1.5, y: 1.5, z: 1}
-  simulateMobile: 1
+  simulateMobile: 0
 --- !u!1 &280711560
 GameObject:
   m_ObjectHideFlags: 0
@@ -2392,6 +2436,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 291774158}
   m_CullTransparentMesh: 1
+--- !u!1 &313822241
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 313822243}
+  - component: {fileID: 313822245}
+  - component: {fileID: 313822244}
+  m_Layer: 0
+  m_Name: UIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!4 &313822243
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313822241}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 926.703, y: 698.93317, z: -529.9071}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &313822244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313822241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85a3813c04367ea45bb6b452be9ba98c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &313822245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 313822241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5010f63768e30e84bba3d6e01dce96d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinsText: {fileID: 57086974}
 --- !u!1 &331939330
 GameObject:
   m_ObjectHideFlags: 0
@@ -3371,6 +3473,10 @@ MonoBehaviour:
   dragThreshold: 0.1
   inertiaMultiplier: 0.5
   inertiaDuration: 0.8
+  portraitScale: {x: 50, y: 50, z: 50}
+  landscapeScale: {x: 70, y: 70, z: 70}
+  pcScale: {x: 70, y: 70, z: 70}
+  simulateMobile: 0
 --- !u!1 &428552822
 GameObject:
   m_ObjectHideFlags: 0
@@ -9197,7 +9303,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1315950938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14254,3 +14360,5 @@ SceneRoots:
   - {fileID: 412707053}
   - {fileID: 590307822}
   - {fileID: 1226064445}
+  - {fileID: 18443900}
+  - {fileID: 313822243}

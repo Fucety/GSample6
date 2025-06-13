@@ -11,6 +11,13 @@ public class StandRotator : MonoBehaviour
     [SerializeField] private float inertiaMultiplier = 2f; // Множитель инерции для ускорения
     [SerializeField] private float inertiaDuration = 1.5f; // Длительность инерционного замедления (сек)
 
+    // Добавленные поля для скейла в зависимости от ориентации
+    [SerializeField] private Vector3 portraitScale = new Vector3(70f, 70f, 70f);
+    [SerializeField] private Vector3 landscapeScale = new Vector3(100f, 100f, 100f);
+    [SerializeField] private Vector3 pcScale = new Vector3(70f, 70f, 70f);
+    [SerializeField] private bool simulateMobile = false;
+    private ScreenOrientation lastOrientation;
+
     private bool isDragging; // Флаг, указывающий, происходит ли перетаскивание
     private Vector2 lastMousePosition; // Последняя позиция мыши для расчета вращения
     private Tween autoRotateTween; // Твин для автоматического вращения
@@ -23,12 +30,19 @@ public class StandRotator : MonoBehaviour
     private void Start()
     {
         StartAutoRotation();
+        lastOrientation = Screen.orientation;
+        UpdateScale();
     }
 
     // Обновление каждый кадр
     private void Update()
     {
         HandleManualRotation();
+        if (lastOrientation != Screen.orientation)
+        {
+            lastOrientation = Screen.orientation;
+            UpdateScale();
+        }
     }
 
     // Запускает автоматическое вращение объекта
@@ -151,5 +165,30 @@ public class StandRotator : MonoBehaviour
         autoRotateTween?.Kill();
         manualRotateTween?.Kill();
         inertiaTween?.Kill();
+    }
+
+    // Новый метод для смены скейла объекта в зависимости от ориентации
+    private void UpdateScale()
+    {
+        Vector3 targetScale;
+        if ((Application.platform == RuntimePlatform.WindowsPlayer ||
+             Application.platform == RuntimePlatform.OSXPlayer ||
+             Application.platform == RuntimePlatform.LinuxPlayer ||
+             Application.platform == RuntimePlatform.WindowsEditor ||
+             Application.platform == RuntimePlatform.OSXEditor ||
+             Application.platform == RuntimePlatform.LinuxEditor) && !simulateMobile)
+        {
+            targetScale = pcScale;
+        }
+        else if (Screen.orientation == ScreenOrientation.LandscapeLeft ||
+                 Screen.orientation == ScreenOrientation.LandscapeRight)
+        {
+            targetScale = landscapeScale;
+        }
+        else
+        {
+            targetScale = portraitScale;
+        }
+        transform.localScale = targetScale;
     }
 }

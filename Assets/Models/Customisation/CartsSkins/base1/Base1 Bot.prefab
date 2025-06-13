@@ -8,6 +8,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 254184186577404240, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9329775ecb023254191057e7fef22ca1, type: 2}
+    - target: {fileID: 450597610742510124, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9329775ecb023254191057e7fef22ca1, type: 2}
     - target: {fileID: 753227711059236502, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
       propertyPath: _maxTurnSpeed
       value: 70
@@ -20,10 +28,22 @@ PrefabInstance:
       propertyPath: _maxForwardSpeedKPH
       value: 35
       objectReference: {fileID: 0}
+    - target: {fileID: 4291188858296619198, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9329775ecb023254191057e7fef22ca1, type: 2}
     - target: {fileID: 6032882816936506424, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
       propertyPath: m_Name
       value: Base1 Bot
       objectReference: {fileID: 0}
+    - target: {fileID: 7153986713066683281, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9329775ecb023254191057e7fef22ca1, type: 2}
+    - target: {fileID: 8314291804987456514, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9329775ecb023254191057e7fef22ca1, type: 2}
     - target: {fileID: 8373207088377295823, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -64,6 +84,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8518692712854911521, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9329775ecb023254191057e7fef22ca1, type: 2}
     m_RemovedComponents:
     - {fileID: 4576682305423089459, guid: e1df6c3c5c0073a4ab0823a2fc4a3594, type: 3}
     m_RemovedGameObjects: []
@@ -100,6 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  deathParticlePrefab: {fileID: 0}
 --- !u!114 &7166447066032084485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,9 +172,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   navMeshAgent: {fileID: 3066853838730771744}
-  bonusUseChance: 0.5
-  aggressionLevel: 1
-  obstacleAvoidanceDistance: 5
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 0
+  bonusLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  rivalLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  visionRadius: 20
+  targetReachDistance: 3
+  aggressionLevel: 1
+  maxSteerAngle: 40
+  avoidDistance: 6
+  avoidAngle: 45
+  avoidTime: 1.2
+  reverseTimeOnCollision: 0.6
+  reverseThrottle: 0.5
+  pathUpdateInterval: 0.5
+  steerSmoothTime: 0.15
+  startDelay: 0.2
+  pointSearchRadius: 25
+  showTargetGizmo: 1
+  showDistanceGizmos: 1

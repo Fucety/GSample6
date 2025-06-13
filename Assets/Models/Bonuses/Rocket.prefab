@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2961233608952785570}
   - component: {fileID: 381531775507614174}
   - component: {fileID: 3652227186726708506}
+  - component: {fileID: 2280993003311422363}
   m_Layer: 0
   m_Name: Rocket
   m_TagString: Untagged
@@ -69,9 +70,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 15
-  lifetime: 5
   damage: 50
-  explosionEffect: {fileID: 6057912173392383318, guid: 703b0a0ab266c8940a7ed27f2a7c991d, type: 3}
+  explosionEffectPrefab: {fileID: 6057912173392383318, guid: 703b0a0ab266c8940a7ed27f2a7c991d, type: 3}
+  maxLifetime: 5
+--- !u!114 &2280993003311422363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7859307179379403680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d69f08008ad7d48a6f0a8ca2591e8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  returnDelay: 5
 --- !u!1001 &5555182975338025042
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 369487452519156740}
   - component: {fileID: 2088242839125415549}
   - component: {fileID: 3721389267790581295}
+  - component: {fileID: -330262027010398741}
   m_Layer: 7
   m_Name: Mine
   m_TagString: Untagged
@@ -151,8 +152,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 50
-  explosionEffect: {fileID: 6057912173392383318, guid: 703b0a0ab266c8940a7ed27f2a7c991d, type: 3}
-  lifetime: 10
+  explosionPoolTag: Explosion
+  maxLifetime: 10
+--- !u!114 &-330262027010398741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5598704093631220730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d69f08008ad7d48a6f0a8ca2591e8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  returnDelay: 10
 --- !u!1001 &3763370614936215109
 PrefabInstance:
   m_ObjectHideFlags: 0

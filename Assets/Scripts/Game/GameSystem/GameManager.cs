@@ -17,43 +17,52 @@ namespace UshiSoft.UACPF
     {
         public static GameManager Instance { get; private set; }
 
+        [Header("Настройки матча")]
         [SerializeField] private float startDelay = 3f;
+        [Tooltip("Список ботов, которые будут участвовать в матче. Машина игрока будет добавлена автоматически при спавне.")]
         [SerializeField] private List<CarControllerBase> racers;
         [SerializeField] private float matchDuration = 180f;
         [SerializeField] private float respawnDelay = 3f;
 
+        [Header("Настройки наград")]
+        [SerializeField] private float comboWindow = 10f;
+        [SerializeField] private float comboMultiplier = 1.25f;
+
         private GameState state = GameState.Waiting;
         private float startTimer;
         private float matchTimer;
-        private int playerCoins;
+        private int coinsEarnedThisMatch;
         private int playerEliminations;
         private CarControllerBase playerCar;
         private Dictionary<CarControllerBase, int> racerEliminations;
+
+        // Для логики комбо
+        private float lastEliminationTime;
+        private int comboCount;
 
         private void Awake()
         {
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(gameObject);
             }
             else
             {
                 Destroy(gameObject);
                 return;
             }
-
-            playerCar = racers.Find(r => r.GetComponent<PlayerCarControl>() != null);
-            if (playerCar == null)
-            {
-                Debug.LogError("GameManager: Машина игрока не найдена в списке racers!");
-            }
-
+            
+            // Инициализируем словарь для статистики. Он будет заполняться ботами из инспектора и игроком при спавне.
             racerEliminations = new Dictionary<CarControllerBase, int>();
             foreach (var racer in racers)
             {
                 racerEliminations[racer] = 0;
             }
+            
+            coinsEarnedThisMatch = 0; // Начинаем матч с 0 заработанных монет
+            playerEliminations = 0;
+            comboCount = 0;
         }
 
         private void Start()
@@ -65,20 +74,50 @@ namespace UshiSoft.UACPF
 
         private void Update()
         {
-            if (state == GameState.Waiting)
+            switch (state)
             {
-                if ((startTimer -= Time.deltaTime) <= 0f)
-                {
-                    StartMatch();
-                }
+                case GameState.Waiting:
+                    if ((startTimer -= Time.deltaTime) <= 0f)
+                    {
+                        StartMatch();
+                    }
+                    break;
+                case GameState.Fighting:
+                    if ((matchTimer -= Time.deltaTime) <= 0f)
+                    {
+                        FinishMatch();
+                    }
+                    break;
+                case GameState.Paused:
+                case GameState.Finished:
+                    break;
             }
-            else if (state == GameState.Fighting)
+        }
+        
+        // --- НОВЫЙ МЕТОД ---
+        // Публичный метод для добавления игрока, созданного во время выполнения через PlayerSpawner
+        public void RegisterPlayerCar(CarControllerBase playerCarController)
+        {
+            if (playerCarController == null) return;
+
+            // Добавляем машину игрока в общий список участников
+            if (!racers.Contains(playerCarController))
             {
-                if ((matchTimer -= Time.deltaTime) <= 0f)
-                {
-                    FinishMatch();
-                }
+                racers.Add(playerCarController);
             }
+
+            // Назначаем ее как основную машину игрока
+            this.playerCar = playerCarController;
+
+            // Инициализируем для нее запись в таблице устранений
+            if (!racerEliminations.ContainsKey(playerCarController))
+            {
+                racerEliminations.Add(playerCarController, 0);
+            }
+
+            // <<< ГЛАВНОЕ ИЗМЕНЕНИЕ: ВЫЗЫВАЕМ СОБЫТИЕ >>>
+            // Оповещаем всю игру (включая камеру), что игрок готов.
+            GameEvents.OnPlayerSpawned.Invoke(playerCarController);
         }
 
         private void StartMatch()
@@ -86,7 +125,9 @@ namespace UshiSoft.UACPF
             state = GameState.Fighting;
             foreach (var racer in racers)
             {
-                racer.enabled = true;
+                // Убедимся, что все участники включены
+                if(racer != null) racer.enabled = true;
+                
                 var checkpointTrigger = racer.GetComponent<CheckpointTrigger>();
                 if (checkpointTrigger != null)
                 {
@@ -99,13 +140,14 @@ namespace UshiSoft.UACPF
         public void FinishMatch()
         {
             if (state != GameState.Fighting) return;
+            
             state = GameState.Finished;
             foreach (var racer in racers)
             {
-                racer.enabled = false;
+                if(racer != null) racer.enabled = false;
             }
-            // В `playerEliminations` уже хранятся итоговые устранения игрока
-            GameEvents.OnMatchFinished.Invoke(playerCoins, playerEliminations);
+            
+            GameEvents.OnMatchFinished.Invoke(coinsEarnedThisMatch, playerEliminations);
         }
 
         public void RegisterElimination(CarControllerBase eliminatedCar)
@@ -115,29 +157,33 @@ namespace UshiSoft.UACPF
             var killer = eliminatedCar.GetComponent<CarHealth>()?.LastAttacker;
             if (killer != null)
             {
-                // Проверяем, есть ли у убийцы компонент CarHealth
                 var attackerHealth = killer.GetComponent<CarHealth>();
                 if (attackerHealth != null)
                 {
                     attackerHealth.AddElimination();
-                    // Обновляем статистику в словаре
                     if (racerEliminations.ContainsKey(killer))
                     {
                         racerEliminations[killer] = attackerHealth.Eliminations;
                     }
                 }
                 
-                // Если убийца - игрок, обновляем его личный счетчик и начисляем монеты
                 if (killer == playerCar)
                 {
                     playerEliminations++;
-                    CurrencyManager.Instance.AddCoinsForElimination(50);
+                    // --- НОВАЯ ЛОГИКА ПОДСЧЕТА НАГРАДЫ ---
+                    int baseReward = 50;
+                    bool isCombo = (Time.time - lastEliminationTime) <= comboWindow;
+                    comboCount = isCombo ? comboCount + 1 : 1;
+                    int rewardWithCombo = Mathf.RoundToInt(baseReward * Mathf.Pow(comboMultiplier, comboCount - 1));
+                    coinsEarnedThisMatch += rewardWithCombo;
+                    lastEliminationTime = Time.time;
+                    // Обновляем только UI
+                    GameEvents.OnCoinsEarnedThisMatchUpdated.Invoke(coinsEarnedThisMatch);
                     GameEvents.OnEliminationsUpdated.Invoke(playerEliminations);
                 }
             }
 
             GameEvents.OnElimination.Invoke(eliminatedCar);
-            
             StartCoroutine(RespawnCarCoroutine(eliminatedCar));
         }
 
@@ -170,14 +216,9 @@ namespace UshiSoft.UACPF
 
         public GameState State => state;
         public CarControllerBase PlayerCar => playerCar;
-
-        /// <summary>
-        /// Возвращает отсортированный список участников по количеству устранений.
-        /// </summary>
-        /// <returns>Список пар (Участник, Устранения) от лучшего к худшему.</returns>
+        
         public List<KeyValuePair<CarControllerBase, int>> GetLeaderboard()
         {
-            // Сортируем словарь со статистикой по убыванию очков и возвращаем как список
             return racerEliminations.OrderByDescending(kvp => kvp.Value).ToList();
         }
     }

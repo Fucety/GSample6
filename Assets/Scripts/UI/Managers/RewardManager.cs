@@ -2,13 +2,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.U2D;
 using TMPro;
+using YG;
 
 [System.Serializable]
 public class RewardData
 {
-    public string spriteName; // Имя награды
-    public int ads;          // Количество рекламы
-    public int coins;        // Количество монет
+    public string spriteName;
+    public int ads;
+    public int coins;
 }
 
 [CreateAssetMenu(fileName = "RewardPanelData", menuName = "PanelData/RewardPanelData")]
@@ -40,47 +41,79 @@ public class RewardManager : MonoBehaviour
             cellsPerGrid = 9,
             animationDuration = animationDuration,
             animationDelay = animationDelay,
-            configureCell = (button, reward) =>
-            {
-                if (string.IsNullOrEmpty(reward.spriteName)) return;
-
-                Sprite skinSprite = spriteAtlas.GetSprite(reward.spriteName);
-                if (skinSprite != null)
-                {
-                    if (button.transform.Find("Icon").TryGetComponent<Image>(out var childImage))
-                    {
-                        childImage.sprite = skinSprite;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Компонент Image не найден по пути Icon.");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"Спрайт с именем {reward.spriteName} не найден в атласе.");
-                }
-
-                if (button.transform.Find("Price").TryGetComponent<TextMeshProUGUI>(out var priceText))
-                {
-                    priceText.text = $"{reward.coins} coins";
-                }
-                else
-                {
-                    Debug.LogWarning($"Компонент TextMeshProUGUI не найден по пути Price.");
-                }
-
-                button.GetComponent<Button>().onClick.RemoveAllListeners();
-                button.GetComponent<Button>().onClick.AddListener(() => OnRewardSelected(reward.spriteName, reward.coins));
-            }
+            configureCell = ConfigureRewardCell
         };
-
         panelManager = new PanelManager<RewardData>(config);
     }
 
-    private void OnRewardSelected(string spriteName, int coins)
+    private void ConfigureRewardCell(GameObject button, RewardData reward)
     {
-        Debug.Log($"Выбрана награда: {spriteName}, Монеты: {coins}");
+        if (string.IsNullOrEmpty(reward.spriteName)) return;
+
+        Sprite skinSprite = spriteAtlas.GetSprite(reward.spriteName);
+        if (skinSprite != null)
+        {
+            if (button.transform.Find("Icon").TryGetComponent<Image>(out var childImage))
+            {
+                childImage.sprite = skinSprite;
+            }
+            else
+            {
+                Debug.LogWarning($"Компонент Image не найден по пути Icon.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Спрайт с именем {reward.spriteName} не найден в атласе.");
+        }
+
+        if (button.transform.Find("Price").TryGetComponent<TextMeshProUGUI>(out var priceText))
+        {
+            priceText.text = reward.ads > 0 ? $"{reward.ads} ads" : $"{reward.coins} coins";
+        }
+
+        var buttonComponent = button.GetComponent<Button>();
+        buttonComponent.onClick.RemoveAllListeners();
+
+        bool isUnlocked = PlayerDataManager.Instance.IsRewardUnlocked(reward.spriteName);
+        if (isUnlocked)
+        {
+            buttonComponent.interactable = false;
+            priceText.text = "Unlocked";
+        }
+        else if (reward.ads > 0)
+        {
+            buttonComponent.onClick.AddListener(() => TryClaimRewardWithAds(reward));
+        }
+        else
+        {
+            buttonComponent.onClick.AddListener(() => TryBuyRewardWithCoins(reward));
+        }
+    }
+
+    private void TryClaimRewardWithAds(RewardData reward)
+    {
+        Debug.Log($"[RewardManager] Запрос на показ рекламы для награды {reward.spriteName}...");
+        YG2.RewardedAdvShow("reward_" + reward.spriteName, () =>
+        {
+            PlayerDataManager.Instance.UnlockReward(reward.spriteName);
+            panelManager.RefreshCurrentPage();
+            Debug.Log($"[RewardManager] Награда {reward.spriteName} разблокирована после просмотра рекламы.");
+        });
+    }
+
+    private void TryBuyRewardWithCoins(RewardData reward)
+    {
+        if (PlayerDataManager.Instance.TrySpendCoins(reward.coins))
+        {
+            PlayerDataManager.Instance.UnlockReward(reward.spriteName);
+            panelManager.RefreshCurrentPage();
+            Debug.Log($"[RewardManager] Награда {reward.spriteName} куплена за {reward.coins} монет.");
+        }
+        else
+        {
+            Debug.LogWarning($"[RewardManager] Недостаточно монет для покупки награды {reward.spriteName}.");
+        }
     }
 
     public void MoveRight()

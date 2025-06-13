@@ -15,10 +15,10 @@ namespace UshiSoft.UACPF
             GameEvents.OnCountdownStarted.AddListener(OnCountdownStarted);
             GameEvents.OnMatchStarted.AddListener(OnMatchStarted);
             GameEvents.OnMatchFinished.AddListener(OnMatchFinished);
-            GameEvents.OnCoinsAdded.AddListener(OnCoinsAdded);
             GameEvents.OnEliminationsUpdated.AddListener(OnEliminationsUpdated);
             GameEvents.OnElimination.AddListener(OnElimination);
             GameEvents.OnPauseToggled.AddListener(OnPauseToggled);
+            GameEvents.OnCoinsEarnedThisMatchUpdated.AddListener(OnCoinsEarnedThisMatchUpdated);
         }
 
         private void OnDisable()
@@ -27,20 +27,27 @@ namespace UshiSoft.UACPF
             GameEvents.OnCountdownStarted.RemoveListener(OnCountdownStarted);
             GameEvents.OnMatchStarted.RemoveListener(OnMatchStarted);
             GameEvents.OnMatchFinished.RemoveListener(OnMatchFinished);
-            GameEvents.OnCoinsAdded.RemoveListener(OnCoinsAdded);
             GameEvents.OnEliminationsUpdated.RemoveListener(OnEliminationsUpdated);
             GameEvents.OnElimination.RemoveListener(OnElimination);
             GameEvents.OnPauseToggled.RemoveListener(OnPauseToggled);
+            GameEvents.OnCoinsEarnedThisMatchUpdated.RemoveListener(OnCoinsEarnedThisMatchUpdated);
         }
 
         private void OnCountdownStarted(float duration)
         {
-            uiManager.ShowCountdown(duration);
+            // При старте отсчета, скрываем все панели, кроме панели отсчета,
+            // которую мы сразу же показываем.
+            uiManager.HideAllPanels(); // Скрываем все существующие панели
+            uiManager.ShowCountdown(duration); // Показываем панель обратного отсчета
+            Debug.Log("[GameEventHub] Отсчет запущен. Показываем Countdown Panel."); // Добавлено для отладки
         }
 
         private void OnMatchStarted()
         {
-            uiManager.ShowArenaUI();
+            // После завершения отсчета и старта матча, 
+            // скрываем все (на случай если что-то осталось) и показываем ArenaUI.
+            //uiManager.HideAllPanels(); // Скрываем все панели
+            uiManager.ShowArenaUI(); // Показываем UI арены
             foreach (var bot in bots)
             {
                 bot.enabled = true; // Включаем управление ботами
@@ -49,22 +56,18 @@ namespace UshiSoft.UACPF
 
         private void OnMatchFinished(int coins, int eliminations)
         {
-            uiManager.ShowMatchResults(coins, eliminations);
+            // При завершении матча, скрываем все и показываем результаты.
+            uiManager.HideAllPanels(); // Скрываем все панели
+            uiManager.ShowMatchResults(coins, eliminations); // Показываем результаты матча
             foreach (var bot in bots)
             {
                 bot.enabled = false; // Отключаем ботов
             }
         }
 
-        private void OnCoinsAdded(int amount)
-        {
-            currencyManager.AddCoins(amount);
-            uiManager.UpdateCoins(currencyManager.Coins);
-        }
-
         private void OnEliminationsUpdated(int eliminations)
         {
-            uiManager.UpdateEliminations(eliminations);
+            uiManager.UpdateEliminations(eliminations); // Обновляем отображение убийств в UI
         }
 
         private void OnElimination(CarControllerBase eliminatedCar)
@@ -75,9 +78,22 @@ namespace UshiSoft.UACPF
         private void OnPauseToggled(bool isPaused)
         {
             if (isPaused)
-                uiManager.ShowPauseMenu();
+            {
+                // При паузе скрываем ArenaUI и показываем меню паузы
+                uiManager.HideArenaUI(); // Скрываем UI арены при паузе (предполагается, что такой метод есть или будет добавлен)
+                uiManager.ShowPauseMenu(); // Показываем меню паузы
+            }
             else
-                uiManager.HidePauseMenu();
+            {
+                // При снятии паузы скрываем меню паузы и снова показываем ArenaUI
+                uiManager.HidePauseMenu(); // Скрываем меню паузы
+                uiManager.ShowArenaUI(); // Показываем UI арены
+            }
+        }
+
+        private void OnCoinsEarnedThisMatchUpdated(int coins)
+        {
+            uiManager.UpdateCoinsThisMatch(coins);
         }
     }
 }

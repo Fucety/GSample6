@@ -23,7 +23,7 @@ namespace UshiSoft.UACPF
         [SerializeField, Min(0f)] private float switchToReverseSpeedKPH = 1f; // Скорость для переключения на задний ход
 
         [Header("Input Settings")]
-        [SerializeField] private TouchInputController touchInputController; // Контроллер сенсорного ввода
+        // [SerializeField] private TouchInputController touchInputController; // Убрали это поле, так как будем использовать Instance
         [SerializeField] private bool debugMobileMode = false; // Режим отладки: имитировать мобильное устройство в редакторе
 
         private IInputProvider inputProvider; // Провайдер ввода (клавиатура или сенсор)
@@ -40,9 +40,10 @@ namespace UshiSoft.UACPF
         // Инициализация провайдера ввода в зависимости от платформы или режима отладки
         private void InitializeInputProvider()
         {
-            if ((Application.isMobilePlatform || (debugMobileMode && Application.isEditor)) && touchInputController != null)
+            // Используем TouchInputController.Instance
+            if ((Application.isMobilePlatform || (debugMobileMode && Application.isEditor)) && TouchInputController.Instance != null)
             {
-                inputProvider = touchInputController; // Сенсорный ввод для смартфонов или отладки
+                inputProvider = TouchInputController.Instance; // Сенсорный ввод для смартфонов или отладки
             }
             else
             {

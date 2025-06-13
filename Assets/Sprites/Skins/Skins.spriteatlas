@@ -45,53 +45,25 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 2800000, guid: 85bf101afdbf42a489c0a8a9c0a029df, type: 3}
-    - {fileID: 2800000, guid: e894d814542360b449f934dd06c9edde, type: 3}
-    - {fileID: 2800000, guid: f27672bb773c6264e8dbe01e403b8b16, type: 3}
-    - {fileID: 2800000, guid: 2e09981a7cc74a54dad1f9fdbb88326d, type: 3}
-    - {fileID: 2800000, guid: 1f6eb3613a68ab645b98e8d822972119, type: 3}
-    - {fileID: 2800000, guid: 67cbad66619904549ad405e0ccee860b, type: 3}
-    - {fileID: 2800000, guid: 2667b27e4ab7bb64da2ed8c2cd1bc501, type: 3}
-    - {fileID: 2800000, guid: 4a4c095c16a9e804da206ceb2696f4de, type: 3}
-    - {fileID: 2800000, guid: 3e1c95c58f24b0a4094ebc3b7bbea47f, type: 3}
-    - {fileID: 2800000, guid: 2c3216efbaecb764a97074f971ebad61, type: 3}
+    - {fileID: 2800000, guid: 5fa5d949ccf72ef449d525c11943b996, type: 3}
+    - {fileID: 2800000, guid: 1fbf7833042545b4cbc69c6b6d6ba83b, type: 3}
+    - {fileID: 2800000, guid: 036ec4669e0fc9c4bb1e48c3afc33c33, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
-    - 1f6eb3613a68ab645b98e8d822972119: 21300000
-    - e894d814542360b449f934dd06c9edde: 21300000
-    - 3e1c95c58f24b0a4094ebc3b7bbea47f: 21300000
-    - 67cbad66619904549ad405e0ccee860b: 21300000
-    - 85bf101afdbf42a489c0a8a9c0a029df: 21300000
-    - 2e09981a7cc74a54dad1f9fdbb88326d: 21300000
-    - f27672bb773c6264e8dbe01e403b8b16: 21300000
-    - 4a4c095c16a9e804da206ceb2696f4de: 21300000
-    - 2667b27e4ab7bb64da2ed8c2cd1bc501: 21300000
-    - 2c3216efbaecb764a97074f971ebad61: 21300000
+    - 1fbf7833042545b4cbc69c6b6d6ba83b: 21300000
+    - 036ec4669e0fc9c4bb1e48c3afc33c33: 21300000
+    - 5fa5d949ccf72ef449d525c11943b996: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: 1f6eb3613a68ab645b98e8d822972119, type: 3}
-  - {fileID: 21300000, guid: e894d814542360b449f934dd06c9edde, type: 3}
-  - {fileID: 21300000, guid: 3e1c95c58f24b0a4094ebc3b7bbea47f, type: 3}
-  - {fileID: 21300000, guid: 67cbad66619904549ad405e0ccee860b, type: 3}
-  - {fileID: 21300000, guid: 85bf101afdbf42a489c0a8a9c0a029df, type: 3}
-  - {fileID: 21300000, guid: 2e09981a7cc74a54dad1f9fdbb88326d, type: 3}
-  - {fileID: 21300000, guid: f27672bb773c6264e8dbe01e403b8b16, type: 3}
-  - {fileID: 21300000, guid: 4a4c095c16a9e804da206ceb2696f4de, type: 3}
-  - {fileID: 21300000, guid: 2667b27e4ab7bb64da2ed8c2cd1bc501, type: 3}
-  - {fileID: 21300000, guid: 2c3216efbaecb764a97074f971ebad61, type: 3}
+  - {fileID: 21300000, guid: 1fbf7833042545b4cbc69c6b6d6ba83b, type: 3}
+  - {fileID: 21300000, guid: 036ec4669e0fc9c4bb1e48c3afc33c33, type: 3}
+  - {fileID: 21300000, guid: 5fa5d949ccf72ef449d525c11943b996, type: 3}
   m_PackedSpriteNamesToIndex:
-  - gay5
-  - gay2
-  - gay9
-  - gay6
-  - gay1
-  - gay4
-  - gay3
-  - gay8
-  - gay7
-  - gay10
+  - 1SkinBlue
+  - 1SkinGreen
+  - 1SkinRed
   m_RenderDataMap: {}
   m_Tag: Skins
   m_IsVariant: 0

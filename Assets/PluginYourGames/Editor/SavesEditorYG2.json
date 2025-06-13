@@ -1,0 +1,26 @@
+{
+    "stringKeys": [],
+    "stringValues": [],
+    "floatKeys": [],
+    "floatValues": [],
+    "intKeys": [],
+    "intValues": [],
+    "intExample": 5,
+    "strExample": "Hello!",
+    "boolExample": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "idSave": 23,
+    "totalCoins": 398,
+    "unlockedSkins": [
+        "Car_Skin_01",
+        "1SkinGreen",
+        "1SkinRed",
+        "1SkinBlue"
+    ],
+    "equippedSkin": "1SkinGreen",
+    "unlockedRewards": []
+}

@@ -21,7 +21,7 @@ namespace UshiSoft.UACPF
             if (Instance == null)
             {
                 Instance = this;
-                DontDestroyOnLoad(gameObject);
+                //DontDestroyOnLoad(gameObject);
                 InitializeSpawnPoints(spawnPoints); // Инициализируем его собственными точками
             }
             // Если экземпляр уже существует, значит, это загрузилась новая сцена

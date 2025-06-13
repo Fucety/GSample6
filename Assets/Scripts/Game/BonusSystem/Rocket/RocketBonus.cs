@@ -5,21 +5,33 @@ namespace UshiSoft.UACPF
     [CreateAssetMenu(fileName = "RocketBonus", menuName = "KartingRush/Bonuses/Rocket")]
     public class RocketBonus : BonusBase
     {
-        [SerializeField] private GameObject rocketPrefab; // Префаб ракеты
+        // [SerializeField] private GameObject rocketPrefab; // Больше не нужен, будем использовать тэг
+        [SerializeField] private string rocketPoolTag = "Rocket"; // Тэг для пула ракеты
 
         public override void Activate(CarControllerBase car)
         {
-            // Определяем позицию спавна ракеты перед машиной
-            // Увеличиваем расстояние (например, до 3-4 метров) и добавляем небольшое поднятие по Y
-            float spawnDistance = 2f; // Экспериментируйте с этим значением
-            float spawnHeightOffset = 0.5f; // Небольшое поднятие над землей/машиной
+            if (ObjectPoolManager.Instance == null)
+            {
+                Debug.LogError("ObjectPoolManager.Instance is null! Cannot activate rocket bonus.");
+                return;
+            }
+
+            float spawnDistance = 2f; 
+            float spawnHeightOffset = 0.5f; 
 
             Vector3 spawnPosition = car.transform.position + car.transform.forward * spawnDistance + Vector3.up * spawnHeightOffset;
-            GameObject rocketObj = Instantiate(rocketPrefab, spawnPosition, car.transform.rotation);
-            Rocket rocket = rocketObj.GetComponent<Rocket>();
-            if (rocket != null)
+            
+            // Получаем ракету из пула
+            GameObject rocketObj = ObjectPoolManager.Instance.GetPooledObject(rocketPoolTag);
+            if (rocketObj != null)
             {
-                rocket.SetOwner(car); // Устанавливаем владельца
+                rocketObj.transform.position = spawnPosition;
+                rocketObj.transform.rotation = car.transform.rotation;
+                Rocket rocket = rocketObj.GetComponent<Rocket>();
+                if (rocket != null)
+                {
+                    rocket.SetOwner(car); // Устанавливаем владельца и сбрасываем состояние
+                }
             }
         }
     }
